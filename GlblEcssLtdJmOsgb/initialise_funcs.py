@@ -35,10 +35,11 @@ from shape_funcs import format_bbox, calculate_area
 WARN_STR = '*** Warning *** '
 ERROR_STR = '*** Error *** '
 BBOX_DEFAULT = [-4.8, 52.54, -3.42, 53.33] # lon_ll, lat_ll, lon_ur, lat_ur - Gwynedd, Wales
+MODEL_SWITCHES_FN = 'Model_Switches.dat'
 sleepTime = 5
 
 MNDTRY_GRPS_SETUP = ['glbl_ecss_sttngs', 'osgb_setup']
-GLBL_ECSS_STTNGS = ['config_dir', 'fname_png', 'log_dir', 'python_exe', 'runsites_py', 'sims_dir']
+GLBL_ECSS_STTNGS = ['ecss_fns_dir', 'config_dir', 'fname_png', 'log_dir', 'python_exe', 'runsites_py', 'sims_dir']
 OSGB_SETUP = ['hwsd_driver_data', 'lta_dir', 'rcp_dir', 'root_dir']
 
 MNDTRY_GRPS_CONFIG = ['cmnGUI', 'minGUI']
@@ -57,36 +58,36 @@ def initiation(form):
     # retrieve settings
     # =================
     form.sttngs = _read_setup_file(form, fname_setup)
-    form.sttngs['glbl_ecsse_str'] = glbl_ecsse_str
-    fetch_notepad_path(form.sttngs)
+    sttngs = form.sttngs
+
+    sttngs['glbl_ecsse_str'] = glbl_ecsse_str
+    fetch_notepad_path(sttngs)
 
     config_files = build_and_display_studies(form, glbl_ecsse_str)
     if len(config_files) > 0:
-        form.sttngs['config_fn'] = config_files[0]
+        sttngs['config_fn'] = config_files[0]
     else:
-        form.sttngs['config_fn'] = form.sttngs['config_dir'] + '/' + glbl_ecsse_str + 'dummy.txt'
+        sttngs['config_fn'] = sttngs['config_dir'] + '/' + glbl_ecsse_str + 'dummy.txt'
 
-    fname_model_switches = 'Model_Switches.dat'
-    cwDir = getcwd()
-    default_model_switches = join(cwDir, fname_model_switches)
-    if isfile(default_model_switches):
-        form.default_model_switches = default_model_switches
+    dflt_mdl_swtchs = join(sttngs['ecss_fns_dir'], MODEL_SWITCHES_FN)
+    if isfile(dflt_mdl_swtchs):
+        sttngs['dflt_mdl_swtchs'] = dflt_mdl_swtchs
     else:
-        print('{0} file does not exist in directory {1}'.format(fname_model_switches,cwDir))
+        print('{} file does not exist in directory {}'.format(MODEL_SWITCHES_FN, sttngs['ecss_fns_dir']))
         sleep(sleepTime)
         sys.exit(0)
 
-    if not check_sims_dir(form.lgr, form.sttngs['sims_dir']):
+    if not check_sims_dir(form.lgr, sttngs['sims_dir']):
         sleep(sleepTime)
         sys.exit(0)
 
     # create dump files for grid point with mu_global 0
     form.fobjs = {}
     output_fnames = list(['nodata_muglobal_cells_v2b.csv'])
-    if form.sttngs['zeros_file']:
+    if sttngs['zeros_file']:
         output_fnames.append('zero_muglobal_cells_v2b.csv')
     for file_name in output_fnames:
-        long_fname = join(form.sttngs['log_dir'], file_name)
+        long_fname = join(sttngs['log_dir'], file_name)
         key = file_name.split('_')[0]
         if exists(long_fname):
             try:
@@ -99,6 +100,7 @@ def initiation(form):
 
         form.fobjs[key] = open(long_fname,'w')
 
+    form.sttngs = sttngs
     return
 
 def _read_setup_file(form, fname_setup):
@@ -106,8 +108,6 @@ def _read_setup_file(form, fname_setup):
     read settings used for programme from the setup file, if it exists,
     or create setup file using default values if file does not exist
     """
-    func_name =  __prog__ +  ' _read_setup_file'
-
     setup_file = join(getcwd(), fname_setup)
     if exists(setup_file):
         try:

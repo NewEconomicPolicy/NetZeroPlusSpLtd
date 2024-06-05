@@ -79,8 +79,8 @@ def make_ecss_files_from_cell(form, climgen, coord, lta_csv,  wthr_dir, ltd_data
 
     # copy across Model_Switches.dat file
     # ===================================
-    outMdlSwtchs = join(sim_dir, basename(form.default_model_switches))
-    copyfile(form.default_model_switches, outMdlSwtchs)
+    out_mdl_swtchs = join(sim_dir, basename(form.sttngs['dflt_mdl_swtchs']))
+    copyfile(form.sttngs['dflt_mdl_swtchs'], out_mdl_swtchs)
 
     # manifest file is essential for subsequent processing
     # ====================================================
