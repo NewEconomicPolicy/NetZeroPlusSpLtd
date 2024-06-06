@@ -20,7 +20,7 @@ from os.path import normpath, isfile
 from time import sleep
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QLabel, QLineEdit, QComboBox, QPushButton, QCheckBox, QApplication
+from PyQt5.QtWidgets import QLabel, QLineEdit, QComboBox, QCheckBox, QApplication, QButtonGroup, QRadioButton
 
 from initialise_funcs import read_config_file, write_config_file
 from glbl_ecss_cmmn_funcs import write_study_definition_file
@@ -192,6 +192,72 @@ def commonSection(form, grid, irow):
     grid.addWidget(lbl09s, irow, 5, 1, 2)
 
     return irow
+
+def spinup_inp_out_mode(form, grid, irow):
+    """
+    write line enabling spinup input/output mode: 0 = off, 1 = read spinup data; 2 = save spinup data to spinup.dat
+    """
+    irow += 1
+    icol = 0
+    w_lbl07 = QLabel('Spinup input/output mode:')
+    w_lbl07.setAlignment(Qt.AlignRight)
+    grid.addWidget(w_lbl07, irow, icol)
+
+    icol += 1
+    w_spin_off = QRadioButton('off')
+    w_spin_off.setToolTip('Set spinup input/output mode to 0 = off in Model_Switches.dat file')
+    grid.addWidget(w_spin_off, irow, icol)
+    form.w_spin_off = w_spin_off
+
+    icol += 1
+    w_spin_read = QRadioButton('read spinup data')
+    w_spin_read.setToolTip('set mode to 1 = read spinup data from spinup.dat')
+    grid.addWidget(w_spin_read, irow, icol)
+    form.w_spin_read = w_spin_read
+
+    icol += 1
+    w_spin_save = QRadioButton('save spinup data')
+    w_spin_save.setToolTip('set mode to 2 = save spinup data to spinup.dat')
+    grid.addWidget(w_spin_save, irow, icol)
+    form.w_spin_save = w_spin_save
+
+    w_inpts_choice = QButtonGroup()
+    w_inpts_choice.addButton(w_spin_off)
+    w_inpts_choice.addButton(w_spin_read)
+    w_inpts_choice.addButton(w_spin_save)
+    w_spin_read.setChecked(True)
+
+    # assign check values to radio buttons
+    # ====================================
+    w_inpts_choice.setId(w_spin_off, 0)
+    w_inpts_choice.setId(w_spin_read, 1)
+    w_inpts_choice.setId(w_spin_save, 2)
+    form.w_inpts_choice = w_inpts_choice
+    return irow
+
+def adjust_model_switches(form):
+    """
+    write last GUI selections Model_Switches.dat file
+    """
+
+    if form.w_spin_save.isChecked():
+        spin_mode = '2'
+    elif form.w_spin_read.isChecked():
+        spin_mode = '1'
+    else:
+        spin_mode = '0'
+
+    dflt_mdl_swtchs = form.sttngs['dflt_mdl_swtchs']
+    with open(dflt_mdl_swtchs, 'r') as finp:
+        lines = finp.readlines()
+
+    lines[15] = spin_mode + lines[15][1:]
+    with open(dflt_mdl_swtchs, 'w') as finp:
+        rc = finp.writelines(lines)
+
+    return
+
+
 
 def save_clicked(form):
     """

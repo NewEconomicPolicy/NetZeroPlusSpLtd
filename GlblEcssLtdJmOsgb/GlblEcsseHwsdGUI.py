@@ -24,7 +24,8 @@ from PyQt5.QtWidgets import (QLabel, QWidget, QHBoxLayout, QVBoxLayout, QGridLay
                 QButtonGroup, QComboBox, QPushButton, QCheckBox, QFileDialog, QTextEdit, QMessageBox, QApplication)
 
 from shape_funcs import format_bbox, calculate_area
-from common_cmpnntsGUI import (commonSection, change_config_file, study_text_changed, exit_clicked, save_clicked)
+from common_cmpnntsGUI import (commonSection, change_config_file, study_text_changed, exit_clicked, save_clicked,
+                                                                 spinup_inp_out_mode, adjust_model_switches)
 from glbl_ecss_cmmn_cmpntsGUI import calculate_grid_cell
 from glbl_ecss_cmmn_funcs import write_study_definition_file
 
@@ -120,6 +121,8 @@ class Form(QWidget):
         w_inpts_choice.setId(w_use_drvr, 1)
         self.w_use_bbox = w_use_bbox
         self.w_inpts_choice = w_inpts_choice
+
+        irow = spinup_inp_out_mode(self, grid, irow)  # extra line for spinup mode
 
         irow += 1
         grid.addWidget(QLabel(''), irow, 2)  # spacer
@@ -592,7 +595,7 @@ class Form(QWidget):
             return
 
         self.study = study
-
+        adjust_model_switches(self)
         if self.w_use_drvr.isChecked():
             ret_code = make_grid_cell_sims(self)
         else:
