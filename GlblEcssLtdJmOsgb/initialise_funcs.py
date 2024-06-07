@@ -40,7 +40,7 @@ sleepTime = 5
 
 MNDTRY_GRPS_SETUP = ['glbl_ecss_sttngs', 'osgb_setup']
 GLBL_ECSS_STTNGS = ['ecss_fns_dir', 'config_dir', 'fname_png', 'log_dir', 'python_exe', 'runsites_py', 'sims_dir']
-OSGB_SETUP = ['hwsd_driver_data', 'lta_dir', 'rcp_dir', 'root_dir']
+OSGB_SETUP = ['uk_hwsd_driver_data', 'lta_dir', 'rcp_dir', 'root_dir']
 
 MNDTRY_GRPS_CONFIG = ['cmnGUI', 'minGUI']
 MIN_GUI_LIST = ['wthrRsrce', 'bbox', 'use_drvr_flag']
@@ -195,15 +195,15 @@ def _read_setup_file(form, fname_setup):
     root_dir = settings[grp]['root_dir']
     lta_dir = join(root_dir, settings[grp]['lta_dir'])
     rcp_dir = join(root_dir, settings[grp]['rcp_dir'])
-    hwsd_drvr_data_fn = join(root_dir, settings[grp]['hwsd_driver_data'])
+    uk_hwsd_drvr_fn = join(root_dir, settings[grp]['uk_hwsd_driver_data'])
 
     # ==============
     run_sims_flag = True
     mess = ' does not exist - cannot run simulations'
-    if isfile(hwsd_drvr_data_fn):
-        print('CSV HWSD driver file ' + hwsd_drvr_data_fn + ' exists\n')
+    if isfile(uk_hwsd_drvr_fn):
+        print('CSV HWSD driver file ' + uk_hwsd_drvr_fn + ' exists\n')
     else:
-        print('\n' + WARN_STR + 'CSV HWSD driver file ' + hwsd_drvr_data_fn + mess)
+        print('\n' + WARN_STR + 'CSV HWSD driver file ' + uk_hwsd_drvr_fn + mess)
         run_sims_flag = False
 
     # ======= LTA ========
@@ -217,7 +217,7 @@ def _read_setup_file(form, fname_setup):
         print(WARN_STR + 'Climate directory {}'.format(rcp_dir) + mess)
         run_sims_flag = False
 
-    print_resource_locations(setup_file, config_dir, hwsd_drvr_data_fn, rcp_dir, lta_dir, sims_dir, log_dir)
+    print_resource_locations(setup_file, config_dir, uk_hwsd_drvr_fn, rcp_dir, lta_dir, sims_dir, log_dir)
     settings[grp]['run_sims_flag'] = run_sims_flag
 
     # return a single list
@@ -225,7 +225,7 @@ def _read_setup_file(form, fname_setup):
     settings['glbl_ecss_sttngs'].update(settings['osgb_setup'])
     return settings['glbl_ecss_sttngs']
 
-def _enable_methodology(form, use_drvr_flag):
+def enable_methodology(form, use_drvr_flag):
     """
 
     """
@@ -283,8 +283,8 @@ def read_config_file(form):
         form.w_use_drvr.setChecked(True)
     else:
         form.w_use_bbox.setChecked(True)
-    _enable_methodology(form, use_drvr_flag)
 
+    enable_methodology(form, use_drvr_flag)
     form.sttngs['bbox'] = config[grp]['bbox']
 
     # common area
@@ -307,7 +307,11 @@ def read_config_file(form):
 
     # =====================
     if use_drvr_flag:
-        make_hwsd_drvr_df(form, config[grp]['hwsd_drvr_fn'])
+        hwsd_drvr_fn = config[grp]['hwsd_drvr_fn']
+    else:
+        hwsd_drvr_fn = join(form.sttngs['root_dir'], form.sttngs['uk_hwsd_driver_data'])
+
+    make_hwsd_drvr_df(form, hwsd_drvr_fn)
 
     form.w_test_dir.setText(config[grp]['test_data_dir'])
     form.w_equimode.setText(str(config[grp]['eqilMode']))

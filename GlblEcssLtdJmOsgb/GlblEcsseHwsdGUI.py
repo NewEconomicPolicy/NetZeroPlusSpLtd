@@ -32,7 +32,8 @@ from glbl_ecss_cmmn_funcs import write_study_definition_file
 from grid_osgb_high_level_fns import make_grid_cell_sims, make_bbox_sims
 from grid_osgb_classes_and_fns import make_hwsd_drvr_df
 
-from initialise_funcs import initiation, read_config_file, build_and_display_studies, write_runsites_cnfg_fn
+from initialise_funcs import (initiation, read_config_file, build_and_display_studies, write_runsites_cnfg_fn,
+                              enable_methodology)
 from set_up_logging import OutLog
 
 WDGT_SIZE_100 = 100
@@ -44,6 +45,7 @@ PADDING = '   '
 PDDNG_10 = ' '*1
 
 RESOLUTIONS = [1, 2, 4, 5, 10]
+GRANULARITY = 120
 
 ERROR_STR = '*** Error *** '
 WARN_STR = '*** Warning *** '
@@ -102,24 +104,26 @@ class Form(QWidget):
         w_use_bbox = QRadioButton('Use bounding box')
         helpText_nc = 'Use bounding box'
         w_use_bbox.setToolTip(helpText_nc)
+        w_use_bbox.clicked.connect(lambda: self.switchMethodology(False))
         grid.addWidget(w_use_bbox, irow, 1)
+        self.w_use_bbox = w_use_bbox
 
         w_use_drvr = QRadioButton("HWSD driver file")
         helpText = 'Use a Excel file comprising a list of grid coordinates'
         w_use_drvr.setToolTip(helpText)
+        grid.addWidget(w_use_drvr, irow, 2)
+        w_use_drvr.clicked.connect(lambda: self.switchMethodology(True))
         grid.addWidget(w_use_drvr, irow, 2)
         self.w_use_drvr = w_use_drvr
 
         w_inpts_choice = QButtonGroup()
         w_inpts_choice.addButton(w_use_bbox)
         w_inpts_choice.addButton(w_use_drvr)
-        w_use_drvr.setChecked(True)
 
         # assign check values to radio buttons
         # ====================================
         w_inpts_choice.setId(w_use_bbox, 2)
         w_inpts_choice.setId(w_use_drvr, 1)
-        self.w_use_bbox = w_use_bbox
         self.w_inpts_choice = w_inpts_choice
 
         irow = spinup_inp_out_mode(self, grid, irow)  # extra line for spinup mode
@@ -399,6 +403,14 @@ class Form(QWidget):
         else:
             w_create_files.setEnabled(False)
 
+    def switchMethodology(self, use_drvr_flag):
+        """
+
+        """
+        enable_methodology(self, use_drvr_flag)
+
+        return
+
     def testSocket(self):
         """
         create a socket object that supports the context manager type, so you can use it in a with statement
@@ -622,8 +634,7 @@ class Form(QWidget):
         """
 
         """
-        granularity = 120
-        calculate_grid_cell(self, granularity)
+        calculate_grid_cell(self, GRANULARITY)
 
     def studyTextChanged(self):
         """

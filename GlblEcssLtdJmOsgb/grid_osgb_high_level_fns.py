@@ -85,9 +85,6 @@ def make_bbox_sims(form):
     """
     called from GUI
     """
-    print('\n' + WARN_STR + 'Bounding box option currently under construction')
-    QApplication.processEvents()
-
     ret_code = fetch_dir_locations(form)
     if ret_code is None:
         return False

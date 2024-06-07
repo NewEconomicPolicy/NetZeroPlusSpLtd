@@ -59,12 +59,14 @@ def make_hwsd_drvr_df(form, hwsd_drvr_data_fn):
     """
      read CSV HWSD driver file using pandas
     """
-    if not isfile(hwsd_drvr_data_fn):
+    if isfile(hwsd_drvr_data_fn):
+        print('\nCreating dataframe from CSV HWSD driver file:\n\t' + hwsd_drvr_data_fn)
+        QApplication.processEvents()
+    else:
         form.hwsd_drvr_data = None
+        print(WARN_STR + 'File ' + hwsd_drvr_data_fn + 'does not exist')
+        QApplication.processEvents()
         return
-
-    print ('\nCreating dataframe from CSV HWSD driver file:\n\t' + hwsd_drvr_data_fn)
-    QApplication.processEvents()
 
     hwsd_drvr_data = read_csv(hwsd_drvr_data_fn, sep = ',')
     nrecs, nmetrics = hwsd_drvr_data.shape
@@ -177,7 +179,11 @@ def _fetch_hwsd_data_from_rec(rec):
      rec is a Series
     """
     vals = rec.to_dict()
-    ecss_lu = vals['ECOSSE_lu_code']
+    if 'ECOSSE_lu_code' in vals:
+        ecss_lu = vals['ECOSSE_lu_code']
+    else:
+        ecss_lu = vals['ECOSSE_land_use_code']
+
     s_bulk = vals['S_BULK_DENSITY']
     s_clay = vals['S_CLAY']
     s_ph_h2o = vals['S_PH_H2O']
