@@ -33,7 +33,7 @@ from grid_osgb_high_level_fns import make_grid_cell_sims, make_bbox_sims
 from grid_osgb_classes_and_fns import make_hwsd_drvr_df
 
 from initialise_funcs import (initiation, read_config_file, build_and_display_studies, write_runsites_cnfg_fn,
-                              enable_methodology)
+                                                                                                enable_methodology)
 from set_up_logging import OutLog
 
 WDGT_SIZE_100 = 100
