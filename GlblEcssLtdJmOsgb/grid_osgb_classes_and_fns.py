@@ -12,6 +12,7 @@ __author__ = 's03mm5'
 
 from os import makedirs, listdir
 from os.path import isdir, join, isfile
+from glob import glob
 from math import floor, ceil
 from calendar import month_abbr
 
@@ -54,6 +55,15 @@ def fetch_dir_locations(form):
         return
 
     return lta_dir, rcp_dir, rcp_realis, plnt_inpt_dir, n_cells_max
+
+def report_pi_csvs(form, test_dir):
+    """
+    report PI CSVs
+    """
+    ncsvs = len(glob(join(test_dir, '*.csv')))
+    form.w_pi_csvs.setText('PI CSVs: ' + f'{ncsvs:,d}' + '\t\t')
+
+    return
 
 def make_hwsd_drvr_df(form, hwsd_drvr_data_fn):
     """

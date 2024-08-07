@@ -30,7 +30,7 @@ from glbl_ecss_cmmn_cmpntsGUI import calculate_grid_cell
 from glbl_ecss_cmmn_funcs import write_study_definition_file
 
 from grid_osgb_high_level_fns import make_grid_cell_sims, make_bbox_sims
-from grid_osgb_classes_and_fns import make_hwsd_drvr_df
+from grid_osgb_classes_and_fns import make_hwsd_drvr_df, report_pi_csvs
 
 from initialise_funcs import (initiation, read_config_file, build_and_display_studies, write_runsites_cnfg_fn,
                                                                                                 enable_methodology)
@@ -95,96 +95,8 @@ class Form(QWidget):
         self.w_combo00s = w_combo00s
         
         # ===========================
-
         irow += 1
-        w_lbl06b = QLabel('Methodology:')
-        w_lbl06b.setAlignment(Qt.AlignRight)
-        grid.addWidget(w_lbl06b, irow, 0)
-
-        w_use_bbox = QRadioButton('Use bounding box')
-        helpText_nc = 'Use bounding box'
-        w_use_bbox.setToolTip(helpText_nc)
-        w_use_bbox.clicked.connect(lambda: self.switchMethodology(False))
-        grid.addWidget(w_use_bbox, irow, 1)
-        self.w_use_bbox = w_use_bbox
-
-        w_use_drvr = QRadioButton("HWSD driver file")
-        helpText = 'Use a Excel file comprising a list of grid coordinates'
-        w_use_drvr.setToolTip(helpText)
-        grid.addWidget(w_use_drvr, irow, 2)
-        w_use_drvr.clicked.connect(lambda: self.switchMethodology(True))
-        grid.addWidget(w_use_drvr, irow, 2)
-        self.w_use_drvr = w_use_drvr
-
-        w_inpts_choice = QButtonGroup()
-        w_inpts_choice.addButton(w_use_bbox)
-        w_inpts_choice.addButton(w_use_drvr)
-
-        # assign check values to radio buttons
-        # ====================================
-        w_inpts_choice.setId(w_use_bbox, 2)
-        w_inpts_choice.setId(w_use_drvr, 1)
-        self.w_inpts_choice = w_inpts_choice
-
         irow = spinup_inp_out_mode(self, grid, irow)  # extra line for spinup mode
-
-        irow += 1
-        grid.addWidget(QLabel(''), irow, 2)  # spacer
-
-        # UR lon/lat
-        # ==========
-        irow += 1
-        lbl02a = QLabel('Upper right longitude:')
-        lbl02a.setAlignment(Qt.AlignRight)
-        grid.addWidget(lbl02a, irow, 0)
-
-        w_ur_lon = QLineEdit()
-        w_ur_lon.setFixedWidth(WDGT_SIZE_80)
-        grid.addWidget(w_ur_lon, irow, 1)
-        self.w_ur_lon = w_ur_lon
-
-        lbl02b = QLabel('latitude:')
-        lbl02b.setAlignment(Qt.AlignRight)
-        grid.addWidget(lbl02b, irow, 2)
-
-        w_ur_lat = QLineEdit()
-        w_ur_lat.setFixedWidth(WDGT_SIZE_80)
-        grid.addWidget(w_ur_lat, irow, 3)
-        self.w_ur_lat = w_ur_lat
-
-        # LL lon/lat
-        # ==========
-        irow += 1
-        lbl01a = QLabel('Lower left longitude:')
-        lbl01a.setAlignment(Qt.AlignRight)
-        grid.addWidget(lbl01a, irow, 0)
-
-        w_ll_lon = QLineEdit()
-        w_ll_lon.setFixedWidth(WDGT_SIZE_80)
-        grid.addWidget(w_ll_lon, irow, 1)
-        self.w_ll_lon = w_ll_lon
-
-        lbl01b = QLabel('latitude:')
-        lbl01b.setAlignment(Qt.AlignRight)
-        grid.addWidget(lbl01b, irow, 2)
-
-        w_ll_lat = QLineEdit()
-        w_ll_lat.setFixedWidth(WDGT_SIZE_80)
-        grid.addWidget(w_ll_lat, irow, 3)
-        w_ll_lat.setFixedWidth(80)
-        self.w_ll_lat = w_ll_lat
-
-        # report on bbox
-        # ==============
-        irow += 1
-        lbl03a = QLabel('Study bounding box:')
-        lbl03a.setAlignment(Qt.AlignRight)
-        grid.addWidget(lbl03a, irow, 0)
-
-        w_bbox = QLabel()
-        w_bbox.setAlignment(Qt.AlignTop)
-        grid.addWidget(w_bbox, irow, 1, 1, 5)
-        self.w_bbox = w_bbox
 
         irow += 1
         grid.addWidget(QLabel(''), irow, 2)  # spacer
@@ -197,6 +109,9 @@ class Form(QWidget):
         grid.addWidget(w_drvr_pb, irow, 0)
         self.w_drvr_pb = w_drvr_pb
 
+        # report on driver file
+        # =====================
+
         w_hwsd_drvr_fn = QLabel('')
         grid.addWidget(w_hwsd_drvr_fn, irow, 1, 1, 6)
         self.w_hwsd_drvr_fn = w_hwsd_drvr_fn
@@ -204,6 +119,17 @@ class Form(QWidget):
         w_drvr_dtls = QLabel('Records:' + PDDNG_10)
         grid.addWidget(w_drvr_dtls, irow, 7)
         self.w_drvr_dtls = w_drvr_dtls
+
+        # =====================
+        irow += 1
+        lbl03a = QLabel('Study bounding box:')
+        lbl03a.setAlignment(Qt.AlignRight)
+        grid.addWidget(lbl03a, irow, 0)
+
+        w_bbox = QLabel()
+        w_bbox.setAlignment(Qt.AlignTop)
+        grid.addWidget(w_bbox, irow, 1, 1, 5)
+        self.w_bbox = w_bbox
 
         irow += 1
         grid.addWidget(QLabel(''), irow, 2)  # spacer
@@ -219,6 +145,10 @@ class Form(QWidget):
         w_test_dir = QLabel()
         grid.addWidget(w_test_dir, irow, 1, 1, 5)
         self.w_test_dir = w_test_dir
+
+        w_pi_csvs = QLabel('PI CSVs:' + PDDNG_10)
+        grid.addWidget(w_pi_csvs, irow, 7)
+        self.w_pi_csvs = w_pi_csvs
 
         irow += 1
         grid.addWidget(QLabel(''), irow, 2)  # spacer
@@ -517,6 +447,10 @@ class Form(QWidget):
         if test_dir != '':
             test_dir = normpath(test_dir)
             self.w_test_dir.setText(test_dir)
+
+            # report PI CSVs
+            # ==============
+            report_pi_csvs(self, test_dir)
 
         return
             

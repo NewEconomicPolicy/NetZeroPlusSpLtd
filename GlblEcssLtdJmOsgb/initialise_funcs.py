@@ -29,8 +29,7 @@ from glbl_ecss_cmmn_funcs import build_and_display_studies, check_sims_dir, chec
 from glbl_ecss_cmmn_cmpntsGUI import print_resource_locations
 from set_up_logging import set_up_logging
 
-from grid_osgb_classes_and_fns import make_hwsd_drvr_df
-from shape_funcs import format_bbox, calculate_area
+from grid_osgb_classes_and_fns import make_hwsd_drvr_df, report_pi_csvs
 
 WARN_STR = '*** Warning *** '
 ERROR_STR = '*** Error *** '
@@ -278,15 +277,6 @@ def read_config_file(form):
             form.sttngs['bbox'] = BBOX_DEFAULT
             return False
 
-    use_drvr_flag = config[grp]['use_drvr_flag']
-    if use_drvr_flag:
-        form.w_use_drvr.setChecked(True)
-    else:
-        form.w_use_bbox.setChecked(True)
-
-    enable_methodology(form, use_drvr_flag)
-    form.sttngs['bbox'] = config[grp]['bbox']
-
     # common area
     # ===========
     grp = 'cmnGUI'
@@ -305,29 +295,15 @@ def read_config_file(form):
     form.w_combo10s.setCurrentText(config[grp]['climScnr'])
     form.w_combo10r.setCurrentText(config[grp]['realis'])
 
-    # =====================
-    if use_drvr_flag:
-        hwsd_drvr_fn = config[grp]['hwsd_drvr_fn']
-    else:
-        hwsd_drvr_fn = join(form.sttngs['root_dir'], form.sttngs['uk_hwsd_driver_data'])
-
+    hwsd_drvr_fn = config[grp]['hwsd_drvr_fn']
     make_hwsd_drvr_df(form, hwsd_drvr_fn)
 
-    form.w_test_dir.setText(config[grp]['test_data_dir'])
+    test_data_dir = config[grp]['test_data_dir']
+    form.w_test_dir.setText(test_data_dir)
+    report_pi_csvs(form, test_data_dir)
+
     form.w_equimode.setText(str(config[grp]['eqilMode']))
     form.w_ncoords.setText(config[grp]['n_coords'])
-
-    # ===================
-    # bounding box set up
-    # ===================
-    area = calculate_area(form.sttngs['bbox'])
-    ll_lon, ll_lat, ur_lon, ur_lat = form.sttngs['bbox']
-    form.w_ur_lon.setText(str(ur_lon))
-    form.w_ur_lat.setText(str(ur_lat))
-    form.fstudy = ''
-    form.w_ll_lon.setText(str(ll_lon))
-    form.w_ll_lat.setText(str(ll_lat))
-    form.w_bbox.setText(format_bbox(form.sttngs['bbox'],area))
 
     return True
 
@@ -342,25 +318,15 @@ def write_config_file(form, message_flag = True):
     glbl_ecsse_str = form.sttngs['glbl_ecsse_str']
     config_file = join(form.sttngs['config_dir'], glbl_ecsse_str + study + '.json')
 
-    # prepare the bounding box
-    # ========================
+    # prepare the bounding box - legacy
+    # =================================
     ll_lon, ll_lat , ur_lon,  ur_lat = 4*[0.0]
-    try:
-        ll_lon = float(form.w_ll_lon.text())
-        ll_lat = float(form.w_ll_lat.text())
-        ur_lon = float(form.w_ur_lon.text())
-        ur_lat = float(form.w_ur_lat.text())
-    except ValueError as err:
-        print('Problem writing bounding box to config file: ' + str(err))
-        ur_lon = 0.0
-        ur_lat = 0.0
-
     form.sttngs['bbox'] = list([ll_lon,ll_lat,ur_lon,ur_lat])
 
     config = {
         'minGUI': {
             'bbox' : form.sttngs['bbox'],
-            'use_drvr_flag': form.w_use_drvr.isChecked(),
+            'use_drvr_flag': True,
             'wthrRsrce' : form.sttngs['wthr_rsrc']
         },
         'cmnGUI': {
