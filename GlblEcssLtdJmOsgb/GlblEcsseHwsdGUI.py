@@ -542,10 +542,8 @@ class Form(QWidget):
 
         self.study = study
         adjust_model_switches(self)
-        if self.w_use_drvr.isChecked():
-            ret_code = make_grid_cell_sims(self)
-        else:
-            ret_code = make_bbox_sims(self)
+
+        ret_code = make_grid_cell_sims(self)
         if not ret_code:
             return
 

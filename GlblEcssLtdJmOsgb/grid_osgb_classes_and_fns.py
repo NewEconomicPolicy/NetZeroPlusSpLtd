@@ -46,7 +46,7 @@ def fetch_dir_locations(form):
     rcp_dir = join(form.sttngs['root_dir'], 'ECOSSE_RCP', rcp_realis)
     species = SPECIES['sitka_spruce']
 
-    plnt_inpt_dir = join(form.w_test_dir.text(), rcp_realis, species)
+    plnt_inpt_dir = form.w_test_dir.text()
     if isdir(plnt_inpt_dir):
         form.sttngs['plnt_inpt_dir'] = plnt_inpt_dir
     else:
