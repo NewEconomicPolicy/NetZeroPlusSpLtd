@@ -241,9 +241,10 @@ class ClimGenNC(object,):
 
         # read a plant input file to get start and end years
         # ==================================================
-        coord_dirs = listdir(form.sttngs['plnt_inpt_dir'])
+        plnt_inpt_dir = form.w_test_dir.text()
+        coord_dirs = listdir(plnt_inpt_dir)
         coord_fn = coord_dirs[0]
-        plnt_inpt_csv = join(form.sttngs['plnt_inpt_dir'], coord_fn)
+        plnt_inpt_csv = join(plnt_inpt_dir, coord_fn)
         yrs_pi = _read_plnt_inpt_csv_file(plnt_inpt_csv)
         sim_strt_yr = yrs_pi['yrs'][0] - 1  # first year is for existing land use
         sim_end_yr = yrs_pi['yrs'][-1]
