@@ -166,6 +166,7 @@ def _read_setup_file(form, fname_setup):
     settings[grp]['wthr_rsrc'] = 'CHESS'
     settings[grp]['req_resol_upscale'] = 1
     settings[grp]['stdout_path'] = join(sims_dir, 'stdout.txt')     # location of job output from run sites script
+    ecss_fns_dir = settings[grp]['ecss_fns_dir']
 
     if settings[grp]['run_ecosse_flag']:
         # ascertain which version of Ecosse is defined in the runsites file
@@ -216,7 +217,8 @@ def _read_setup_file(form, fname_setup):
         print(WARN_STR + 'Climate directory {}'.format(rcp_dir) + mess)
         run_sims_flag = False
 
-    print_resource_locations(setup_file, config_dir, uk_hwsd_drvr_fn, rcp_dir, lta_dir, sims_dir, log_dir)
+    print_resource_locations(setup_file, config_dir, uk_hwsd_drvr_fn, rcp_dir, lta_dir,
+                                                                                sims_dir, log_dir, ecss_fns_dir)
     settings[grp]['run_sims_flag'] = run_sims_flag
 
     # return a single list

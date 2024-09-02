@@ -14,6 +14,7 @@ __author__ = 's03mm5'
 from os.path import isdir, join
 from PyQt5.QtWidgets import QApplication
 from time import time
+from glob import glob
 
 from cvrtcoord import OSGB36toWGS84
 from grid_osgb_classes_and_fns import ClimGenNC, fetch_cell_ecss_data, fetch_ncells_aoi, fetch_dir_locations
@@ -36,6 +37,11 @@ def make_grid_cell_sims(form):
 
     if form.hwsd_drvr_data is None:
         print(WARN_STR + 'No driver data - cannot proceed')
+        QApplication.processEvents()
+        return False
+
+    if len(glob(join(form.sttngs['plnt_inpt_dir'], '*.csv'))) == 0:
+        print(WARN_STR + 'No plant input files - cannot proceed')
         QApplication.processEvents()
         return False
 

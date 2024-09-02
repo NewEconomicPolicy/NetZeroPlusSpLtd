@@ -62,6 +62,10 @@ def report_pi_csvs(form, test_dir):
     """
     ncsvs = len(glob(join(test_dir, '*.csv')))
     form.w_pi_csvs.setText('PI CSVs: ' + f'{ncsvs:,d}' + '\t\t')
+    if ncsvs == 0:
+        form.w_create_files.setEnabled(False)
+    else:
+        form.w_create_files.setEnabled(True)
 
     return
 
@@ -74,7 +78,7 @@ def make_hwsd_drvr_df(form, hwsd_drvr_data_fn):
         QApplication.processEvents()
     else:
         form.hwsd_drvr_data = None
-        print(WARN_STR + 'File ' + hwsd_drvr_data_fn + 'does not exist')
+        print(WARN_STR + 'HWSD driver file ' + hwsd_drvr_data_fn + 'does not exist')
         QApplication.processEvents()
         return
 
