@@ -78,7 +78,7 @@ def make_hwsd_drvr_df(form, hwsd_drvr_data_fn):
         QApplication.processEvents()
     else:
         form.hwsd_drvr_data = None
-        print(WARN_STR + 'HWSD driver file ' + hwsd_drvr_data_fn + 'does not exist')
+        print(WARN_STR + 'HWSD driver file ' + hwsd_drvr_data_fn + ' does not exist')
         QApplication.processEvents()
         return
 
