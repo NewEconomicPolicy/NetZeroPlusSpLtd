@@ -36,11 +36,11 @@ from initialise_funcs import (initiation, read_config_file, build_and_display_st
                                                                                                 enable_methodology)
 from set_up_logging import OutLog
 
-WDGT_SIZE_100 = 100
 WDGT_SIZE_80 = 80
 WDGT_SIZE_60 = 60
+WDGT_SIZE_110 = 110
 WDGT_SIZE_150 = 150
-WDGT_SIZE_40 = 40
+
 PADDING = '   '
 PDDNG_10 = ' '*1
 
@@ -105,6 +105,7 @@ class Form(QWidget):
         irow += 1
         w_drvr_pb = QPushButton('HWSD driver file')
         w_drvr_pb.setToolTip('CSV HWSD driver file')
+        w_drvr_pb.setFixedWidth(WDGT_SIZE_110)
         w_drvr_pb.clicked.connect(self.fetchHwsdDrvrFn)
         grid.addWidget(w_drvr_pb, irow, 0)
         self.w_drvr_pb = w_drvr_pb
@@ -139,12 +140,13 @@ class Form(QWidget):
         w_plnt_pb = QPushButton('Plant inputs')
         helpText = 'Path for plant inputs'
         w_plnt_pb.setToolTip(helpText)
+        w_plnt_pb.setFixedWidth(WDGT_SIZE_110)
         grid.addWidget(w_plnt_pb, irow, 0)
-        w_plnt_pb.clicked.connect(self.fetchTstDir)
+        w_plnt_pb.clicked.connect(self.fetchPlntInpDir)
 
-        w_test_dir = QLabel()
-        grid.addWidget(w_test_dir, irow, 1, 1, 5)
-        self.w_test_dir = w_test_dir
+        w_pi_dir = QLabel()
+        grid.addWidget(w_pi_dir, irow, 1, 1, 5)
+        self.w_pi_dir = w_pi_dir
 
         w_pi_csvs = QLabel('PI CSVs:' + PDDNG_10)
         grid.addWidget(w_pi_csvs, irow, 7)
@@ -189,7 +191,7 @@ class Form(QWidget):
         w_create_files = QPushButton("Create sim files")
         helpText = 'Generate ECOSSE simulation file sets corresponding to ordered HWSD global mapping unit set in CSV file'
         w_create_files.setToolTip(helpText)
-        w_create_files.setFixedWidth(WDGT_SIZE_100)
+        w_create_files.setFixedWidth(WDGT_SIZE_110)
         grid.addWidget(w_create_files, irow, 0)
         w_create_files.clicked.connect(self.createSimsClicked)
         self.w_create_files = w_create_files
@@ -333,6 +335,26 @@ class Form(QWidget):
         else:
             w_create_files.setEnabled(False)
 
+    def fetchSpinupDir(self):
+        """
+
+        """
+        dialog = QFileDialog(self)
+        dialog.ShowDirsOnly = False
+
+        spin_dir = self.w_spin_dir.text()
+        spin_dir = dialog.getExistingDirectory(self, 'Select directory containing spinup files', spin_dir)
+
+        if spin_dir != '':
+            spin_dir = normpath(spin_dir)
+            self.w_spin_dir.setText(spin_dir)
+
+            # report spinup files
+            # ===================
+            report_pi_csvs(self, spin_dir)
+
+        return
+
     def switchMethodology(self, use_drvr_flag):
         """
 
@@ -434,23 +456,23 @@ class Form(QWidget):
 
         return
 
-    def fetchTstDir(self):
+    def fetchPlntInpDir(self):
         """
 
         """
         dialog = QFileDialog(self)
         dialog.ShowDirsOnly = False
 
-        test_dir = self.w_test_dir.text()
-        test_dir = dialog.getExistingDirectory(self, 'Select directory containing plant inputs', test_dir)
+        pi_dir = self.w_pi_dir.text()
+        pi_dir = dialog.getExistingDirectory(self, 'Select directory containing plant inputs', pi_dir)
 
-        if test_dir != '':
-            test_dir = normpath(test_dir)
-            self.w_test_dir.setText(test_dir)
+        if pi_dir != '':
+            pi_dir = normpath(pi_dir)
+            self.w_pi_dir.setText(pi_dir)
 
             # report PI CSVs
             # ==============
-            report_pi_csvs(self, test_dir)
+            report_pi_csvs(self, pi_dir)
 
         return
             

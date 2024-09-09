@@ -20,7 +20,8 @@ from os.path import normpath, isfile
 from time import sleep
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QLabel, QLineEdit, QComboBox, QCheckBox, QApplication, QButtonGroup, QRadioButton
+from PyQt5.QtWidgets import (QLabel, QLineEdit, QComboBox, QCheckBox, QApplication, QButtonGroup, QRadioButton,
+                                                                                            QCheckBox, QPushButton)
 
 from initialise_funcs import read_config_file, write_config_file
 from glbl_ecss_cmmn_funcs import write_study_definition_file
@@ -28,6 +29,8 @@ from glbl_ecss_cmmn_funcs import write_study_definition_file
 WDGT_SIZE_40 = 40
 WDGT_SIZE_60 = 60
 WDGT_SIZE_100 = 100
+WDGT_SIZE_110 = 110
+PDDNG_10 = ' '*10
 
 EQUIMODE_DFLT = '6'     # default equilibrium mode
 
@@ -233,6 +236,24 @@ def spinup_inp_out_mode(form, grid, irow):
     w_inpts_choice.setId(w_spin_read, 1)
     w_inpts_choice.setId(w_spin_save, 2)
     form.w_inpts_choice = w_inpts_choice
+
+    # ================================
+    irow += 1
+    w_spin_pb = QPushButton('Spinup path')
+    helpText = 'Path for spinup files'
+    w_spin_pb.setToolTip(helpText)
+    w_spin_pb.setFixedWidth(WDGT_SIZE_110)
+    grid.addWidget(w_spin_pb, irow, 0)
+    w_spin_pb.clicked.connect(form.fetchSpinupDir)
+
+    w_spin_dir = QLabel()
+    grid.addWidget(w_spin_dir, irow, 1, 1, 5)
+    form.w_spin_dir = w_spin_dir
+
+    w_spin_dtls = QLabel('Records:' + PDDNG_10)
+    grid.addWidget(w_spin_dtls, irow, 7)
+    form.w_spin_dtls = w_spin_dtls
+
     return irow
 
 def adjust_model_switches(form):
@@ -256,7 +277,6 @@ def adjust_model_switches(form):
         rc = finp.writelines(lines)
 
     return
-
 
 
 def save_clicked(form):

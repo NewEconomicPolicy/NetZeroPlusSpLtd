@@ -15,7 +15,7 @@ __version__ = '0.0.0'
 # ---------------
 # 
 from os.path import exists, normpath, isfile, isdir, join, lexists, split, splitext
-from os import getcwd, remove, makedirs, name as os_name
+from os import getcwd, remove, makedirs
 from json import load as json_load, dump as json_dump
 from json.encoder import JSONEncoder
 from json.decoder import JSONDecodeError
@@ -25,11 +25,11 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 
-from glbl_ecss_cmmn_funcs import build_and_display_studies, check_sims_dir, check_runsites, fetch_notepad_path
+from glbl_ecss_cmmn_funcs import (build_and_display_studies, check_sims_dir, check_runsites, fetch_notepad_path)
 from glbl_ecss_cmmn_cmpntsGUI import print_resource_locations
 from set_up_logging import set_up_logging
 
-from grid_osgb_classes_and_fns import make_hwsd_drvr_df, report_pi_csvs
+from grid_osgb_classes_and_fns import make_hwsd_drvr_df, report_pi_csvs, report_spin_dir
 
 WARN_STR = '*** Warning *** '
 ERROR_STR = '*** Error *** '
@@ -43,7 +43,7 @@ OSGB_SETUP = ['uk_hwsd_driver_data', 'lta_dir', 'rcp_dir', 'root_dir']
 
 MNDTRY_GRPS_CONFIG = ['cmnGUI', 'minGUI']
 MIN_GUI_LIST = ['wthrRsrce', 'bbox', 'use_drvr_flag']
-CMN_GUI_LIST = ['study', 'climScnr', 'realis', 'eqilMode', 'hwsd_drvr_fn', 'n_coords', 'test_data_dir']
+CMN_GUI_LIST = ['study', 'climScnr', 'realis', 'eqilMode', 'hwsd_drvr_fn', 'n_coords', 'pi_data_dir', 'spinup_dir']
 
 # ==============================================================
 
@@ -300,9 +300,13 @@ def read_config_file(form):
     hwsd_drvr_fn = config[grp]['hwsd_drvr_fn']
     make_hwsd_drvr_df(form, hwsd_drvr_fn)
 
-    test_data_dir = config[grp]['test_data_dir']
-    form.w_test_dir.setText(test_data_dir)
-    report_pi_csvs(form, test_data_dir)
+    pi_data_dir = config[grp]['pi_data_dir']
+    form.w_pi_dir.setText(pi_data_dir)
+    report_pi_csvs(form, pi_data_dir)
+
+    spin_dir = config[grp]['spinup_dir']
+    form.w_spin_dir.setText(spin_dir)
+    report_spin_dir(form, spin_dir)
 
     form.w_equimode.setText(str(config[grp]['eqilMode']))
     form.w_ncoords.setText(config[grp]['n_coords'])
@@ -335,7 +339,8 @@ def write_config_file(form, message_flag = True):
             'study' : form.w_study.text(),
             'climScnr'  : form.w_combo10s.currentText(),
             'hwsd_drvr_fn': form.w_hwsd_drvr_fn.text(),
-            'test_data_dir': form.w_test_dir.text(),
+            'pi_data_dir': form.w_pi_dir.text(),
+            'spinup_dir' : form.w_spin_dir.text(),
             'eqilMode'  : form.w_equimode.text(),
             'realis': form.w_combo10r.currentText(),
             'n_coords'  : form.w_ncoords.text()
@@ -400,7 +405,7 @@ def _write_default_config_file(config_file):
             'n_coords': '10',
             'realis': '01',
             'study'    : '',
-            'test_data_dir': ''
+            'pi_data_dir': ''
         }
     }
     # if config file does not exist then create it...

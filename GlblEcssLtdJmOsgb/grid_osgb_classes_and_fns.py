@@ -46,7 +46,7 @@ def fetch_dir_locations(form):
     rcp_dir = join(form.sttngs['root_dir'], 'ECOSSE_RCP', rcp_realis)
     species = SPECIES['sitka_spruce']
 
-    plnt_inpt_dir = form.w_test_dir.text()
+    plnt_inpt_dir = form.w_pi_dir.text()
     if isdir(plnt_inpt_dir):
         form.sttngs['plnt_inpt_dir'] = plnt_inpt_dir
     else:
@@ -56,16 +56,35 @@ def fetch_dir_locations(form):
 
     return lta_dir, rcp_dir, rcp_realis, plnt_inpt_dir, n_cells_max
 
-def report_pi_csvs(form, test_dir):
+def report_spin_dir(form, spin_dir):
+    """
+    report spinup files
+    """
+    nspins = len(glob(join(spin_dir, 'spinup.dat')))
+    form.w_spin_dtls.setText('Spinup files: ' + f'{nspins:,d}' + '\t\t')
+
+    '''
+    if nspins == 0:
+        form.w_create_files.setEnabled(False)
+    else:
+        form.w_create_files.setEnabled(True)
+    '''
+    QApplication.processEvents()
+
+    return
+
+def report_pi_csvs(form, pi_dir):
     """
     report PI CSVs
     """
-    ncsvs = len(glob(join(test_dir, '*.csv')))
+    ncsvs = len(glob(join(pi_dir, '*.csv')))
     form.w_pi_csvs.setText('PI CSVs: ' + f'{ncsvs:,d}' + '\t\t')
     if ncsvs == 0:
         form.w_create_files.setEnabled(False)
     else:
         form.w_create_files.setEnabled(True)
+
+    QApplication.processEvents()
 
     return
 
@@ -241,7 +260,7 @@ class ClimGenNC(object,):
 
         # read a plant input file to get start and end years
         # ==================================================
-        plnt_inpt_dir = form.w_test_dir.text()
+        plnt_inpt_dir = form.w_pi_dir.text()
         coord_dirs = listdir(plnt_inpt_dir)
         coord_fn = coord_dirs[0]
         plnt_inpt_csv = join(plnt_inpt_dir, coord_fn)

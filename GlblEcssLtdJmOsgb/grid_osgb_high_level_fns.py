@@ -40,7 +40,7 @@ def make_grid_cell_sims(form):
         QApplication.processEvents()
         return False
 
-    if len(glob(join(form.w_test_dir.text(), '*.csv'))) == 0:
+    if len(glob(join(form.w_pi_dir.text(), '*.csv'))) == 0:
         print(WARN_STR + 'No plant input files - cannot proceed')
         QApplication.processEvents()
         return False
