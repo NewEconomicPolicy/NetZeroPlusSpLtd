@@ -643,11 +643,11 @@ class Form(QWidget):
             QApplication.processEvents()
 
         chdir(curr_dir)
-        '''
+
         scnds_elapsed = round(time() - start_time)
         print('Time taken: ' + str(timedelta(seconds=scnds_elapsed)))
         QApplication.processEvents()
-        '''
+
         return
 
     def saveClicked(self):
