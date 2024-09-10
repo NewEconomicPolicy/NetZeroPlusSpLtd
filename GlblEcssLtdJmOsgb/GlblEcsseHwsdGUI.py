@@ -237,48 +237,53 @@ class Form(QWidget):
         w_exit.setFixedWidth(WDGT_SIZE_80)
         w_exit.clicked.connect(self.exitClicked)
 
-        # ========
+        # =====================================
         irow += 1
+
+        icol = 0
+        w_mve_spin = QPushButton('Move spinup files', self)
+        helpText = 'Move spinup files'
+        w_mve_spin.setToolTip(helpText)
+        w_mve_spin.setFixedWidth(WDGT_SIZE_110)
+        # w_mve_spin.setEnabled(False)
+        grid.addWidget(w_mve_spin, irow, icol, alignment=Qt.AlignLeft)
+        w_mve_spin.clicked.connect(self.moveSpinupFiles)
+
+        icol += 2
         w_test_sock = QPushButton('Test socket', self)
         helpText = 'Test socket'
         w_test_sock.setToolTip(helpText)
         w_test_sock.setFixedWidth(WDGT_SIZE_80)
         w_test_sock.setEnabled(True)
-        grid.addWidget(w_test_sock, irow, 1)
+        grid.addWidget(w_test_sock, irow, icol)
         w_test_sock.clicked.connect(self.testSocket)
         self.w_test_sock = w_test_sock
 
+        icol += 1
         w_view_log = QPushButton('Ecosse log', self)
         helpText = 'View Ecosse log for all simulations'
         w_view_log.setToolTip(helpText)
         w_view_log.setFixedWidth(WDGT_SIZE_80)
         w_view_log.setEnabled(False)
-        grid.addWidget(w_view_log, irow, 2)
+        grid.addWidget(w_view_log, irow, icol)
         w_view_log.clicked.connect(self.viewStdout)
         self.w_view_log = w_view_log
 
+        icol += 1
         w_del_sims = QPushButton('Del sims', self)
         helpText = 'Delete all simulations'
         w_del_sims.setToolTip(helpText)
         w_del_sims.setFixedWidth(WDGT_SIZE_80)
-        grid.addWidget(w_del_sims, irow, 3)
+        grid.addWidget(w_del_sims, irow, icol)
         w_del_sims.clicked.connect(self.delSims)
 
+        icol += 1
         w_del_stdy = QPushButton('Del study', self)
         helpText = 'Delete study and all simulations'
         w_del_stdy.setToolTip(helpText)
         w_del_stdy.setFixedWidth(WDGT_SIZE_80)
-        grid.addWidget(w_del_stdy, irow, 4)
+        grid.addWidget(w_del_stdy, irow, icol)
         w_del_stdy.clicked.connect(lambda: self.delSims(True))
-
-        # =====================================
-        w_san_disk = QPushButton('SanDisk', self)
-        helpText = 'SanDisk overview'
-        w_san_disk.setToolTip(helpText)
-        w_san_disk.setFixedWidth(WDGT_SIZE_80)
-        w_san_disk.setEnabled(False)
-        grid.addWidget(w_san_disk, irow, 5, alignment=Qt.AlignRight)
-        w_san_disk.clicked.connect(self.sanDisk)
 
         # LH vertical box consists of png image
         # =====================================
@@ -334,6 +339,26 @@ class Form(QWidget):
             w_create_files.setEnabled(True)
         else:
             w_create_files.setEnabled(False)
+
+    def moveSpinupFiles(form):
+        """
+
+        """
+        from os.path import isdir
+        from shutil import move as move_file
+
+        study = form.w_study.text()
+        study_dir = join(form.sttngs['sims_dir'], study)
+        dir_list = listdir(study_dir)
+        for dirn in dir_list:
+            dirn_full = join(study_dir, dirn)
+            if isdir(dirn_full):
+                spinup_fn = join(dirn_full, 'spinup.dat')
+                if isfile(spinup_fn):
+                    # move_file(spinup_fn, out_fn)
+                    pass
+
+        return
 
     def fetchSpinupDir(self):
         """
@@ -428,31 +453,6 @@ class Form(QWidget):
         notepad_path, stdout_path = self.sttngs['notepad_path'], self.sttngs['stdout_path']
         if notepad_path is not None and stdout_path is not None:
             Popen( list([self.sttngs['notepad_path'], self.sttngs['stdout_path']]), stdout=DEVNULL)
-
-        return
-
-    def sanDisk(self):
-        """
-
-        """
-        lta_dir = join(self.sttngs['root_dir'], self.sttngs['lta_dir'])
-        for rcp in listdir(lta_dir):
-            dirnm = join(lta_dir, rcp)
-            print('Checking lta dir: ' + dirnm)
-            fns = listdir(dirnm)
-            print('Found {} files e.g. {}'.format(len(fns), fns[0]))
-            QApplication.processEvents()
-
-        print('Copied {} files e.g. {}'.format(len(fns), fns[0]))
-        QApplication.processEvents()
-
-        wthr_dir = join(self.sttngs['root_dir'], self.sttngs['rcp_dir'])
-        for rcp in listdir(wthr_dir):
-            rcp_dir = join(wthr_dir, rcp)
-            print('Checking wthr dir: ' + rcp_dir)
-            dirs = listdir(rcp_dir)
-            print('Found {} dirs e.g. {}'.format(len(dirs), dirs[0]))
-            QApplication.processEvents()
 
         return
 
@@ -630,17 +630,19 @@ class Form(QWidget):
         command_line = [self.sttngs['python_exe'], runsites_py, runsites_cnfg_fn]
         start_time = time()
 
+        success_flag = True
         try:
             # new_inst = Popen(command_line, shell=False, stdin=PIPE, stdout=open(stdout_path, 'w'), stderr=STDOUT)
             new_inst = Popen(command_line, stderr=STDOUT)
-            if new_inst.stdin is not None:
+            if new_inst.pid is not None:
                 print('Launched: ' + runsites_py + ' with process id: ' + str(new_inst.pid))
                 QApplication.processEvents()
 
         except OSError as err:
+            success_flag = False
             mess = ERROR_STR + 'Run sites script ' + runsites_py
             print(mess + ' could not be launched due to error ' + str(err))
-            QApplication.processEvents()
+            QApplication.processEvents()            
 
         chdir(curr_dir)
 
@@ -648,6 +650,13 @@ class Form(QWidget):
         print('Time taken: ' + str(timedelta(seconds=scnds_elapsed)))
         QApplication.processEvents()
 
+        '''
+        # stanza to move spinup files
+        # ===========================
+        if success_flag:
+            from misc_lta_fns import move_spinup_files
+            move_spinup_files(self)
+        '''
         return
 
     def saveClicked(self):
