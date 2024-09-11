@@ -226,24 +226,6 @@ def _read_setup_file(form, fname_setup):
     settings['glbl_ecss_sttngs'].update(settings['osgb_setup'])
     return settings['glbl_ecss_sttngs']
 
-def enable_methodology(form, use_drvr_flag):
-    """
-
-    """
-    if use_drvr_flag:
-        use_bbox_flag = False
-    else:
-        use_bbox_flag = True
-
-    form.w_ur_lon.setEnabled(use_bbox_flag)
-    form.w_ur_lat.setEnabled(use_bbox_flag)
-    form.w_ll_lon.setEnabled(use_bbox_flag)
-    form.w_ll_lat.setEnabled(use_bbox_flag)
-
-    form.w_drvr_pb.setEnabled(use_drvr_flag)
-
-    return
-
 def read_config_file(form):
     """
     read widget settings used in the previous programme session from the config file, if it exists,
@@ -360,7 +342,9 @@ def write_config_file(form, message_flag = True):
     return
 
 def write_runsites_cnfg_fn(form):
-
+    """
+    C
+    """
     func_name =  __prog__ +  ' write_runsites_cnfg_fn'
 
     # read the runsites config file and edit one line

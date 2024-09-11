@@ -32,13 +32,12 @@ from glbl_ecss_cmmn_funcs import write_study_definition_file
 from grid_osgb_high_level_fns import make_grid_cell_sims, make_bbox_sims
 from grid_osgb_classes_and_fns import make_hwsd_drvr_df, report_pi_csvs
 
-from initialise_funcs import (initiation, read_config_file, build_and_display_studies, write_runsites_cnfg_fn,
-                                                                                                enable_methodology)
+from initialise_funcs import (initiation, read_config_file, build_and_display_studies, write_runsites_cnfg_fn)
 from set_up_logging import OutLog
 
 WDGT_SIZE_80 = 80
 WDGT_SIZE_60 = 60
-WDGT_SIZE_110 = 110
+WDGT_SIZE_110 = 115
 WDGT_SIZE_150 = 150
 
 PADDING = '   '
@@ -245,7 +244,7 @@ class Form(QWidget):
         helpText = 'Move spinup files'
         w_mve_spin.setToolTip(helpText)
         w_mve_spin.setFixedWidth(WDGT_SIZE_110)
-        # w_mve_spin.setEnabled(False)
+        w_mve_spin.setEnabled(False)
         grid.addWidget(w_mve_spin, irow, icol, alignment=Qt.AlignLeft)
         w_mve_spin.clicked.connect(self.moveSpinupFiles)
 
@@ -377,14 +376,6 @@ class Form(QWidget):
             # report spinup files
             # ===================
             report_pi_csvs(self, spin_dir)
-
-        return
-
-    def switchMethodology(self, use_drvr_flag):
-        """
-
-        """
-        enable_methodology(self, use_drvr_flag)
 
         return
 
