@@ -60,7 +60,7 @@ def report_spin_dir(form, spin_dir):
     """
     report spinup files
     """
-    nspins = len(glob(join(spin_dir, 'spinup.dat')))
+    nspins = len(glob(join(spin_dir, 'spinup_*.dat')))
     form.w_spin_dtls.setText('Spinup files: ' + f'{nspins:,d}' + '\t\t')
 
     '''

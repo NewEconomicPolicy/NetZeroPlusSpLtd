@@ -29,8 +29,8 @@ from common_cmpnntsGUI import (commonSection, change_config_file, study_text_cha
 from glbl_ecss_cmmn_cmpntsGUI import calculate_grid_cell
 from glbl_ecss_cmmn_funcs import write_study_definition_file
 
-from grid_osgb_high_level_fns import make_grid_cell_sims, make_bbox_sims
-from grid_osgb_classes_and_fns import make_hwsd_drvr_df, report_pi_csvs
+from grid_osgb_high_level_fns import make_grid_cell_sims
+from grid_osgb_classes_and_fns import make_hwsd_drvr_df, report_pi_csvs, report_spin_dir
 
 from initialise_funcs import (initiation, read_config_file, build_and_display_studies, write_runsites_cnfg_fn)
 from set_up_logging import OutLog
@@ -244,7 +244,7 @@ class Form(QWidget):
         helpText = 'Move spinup files'
         w_mve_spin.setToolTip(helpText)
         w_mve_spin.setFixedWidth(WDGT_SIZE_110)
-        w_mve_spin.setEnabled(False)
+        # w_mve_spin.setEnabled(False)
         grid.addWidget(w_mve_spin, irow, icol, alignment=Qt.AlignLeft)
         w_mve_spin.clicked.connect(self.moveSpinupFiles)
 
@@ -339,23 +339,25 @@ class Form(QWidget):
         else:
             w_create_files.setEnabled(False)
 
-    def moveSpinupFiles(form):
+    def moveSpinupFiles(self):
         """
 
         """
         from os.path import isdir
         from shutil import move as move_file
 
-        study = form.w_study.text()
-        study_dir = join(form.sttngs['sims_dir'], study)
+        study = self.w_study.text()
+        study_dir = join(self.sttngs['sims_dir'], study)
         dir_list = listdir(study_dir)
+        spin_dir = self.w_spin_dir.text()
+
         for dirn in dir_list:
             dirn_full = join(study_dir, dirn)
             if isdir(dirn_full):
                 spinup_fn = join(dirn_full, 'spinup.dat')
                 if isfile(spinup_fn):
-                    # move_file(spinup_fn, out_fn)
-                    pass
+                    spin_ref_fn = join(spin_dir, 'spinup_' + dirn + '.dat')
+                    move_file(spinup_fn, spin_ref_fn)
 
         return
 
@@ -375,7 +377,7 @@ class Form(QWidget):
 
             # report spinup files
             # ===================
-            report_pi_csvs(self, spin_dir)
+            report_spin_dir(self, spin_dir)
 
         return
 
@@ -641,13 +643,13 @@ class Form(QWidget):
         print('Time taken: ' + str(timedelta(seconds=scnds_elapsed)))
         QApplication.processEvents()
 
-        '''
+
         # stanza to move spinup files
         # ===========================
         if success_flag:
             from misc_lta_fns import move_spinup_files
             move_spinup_files(self)
-        '''
+
         return
 
     def saveClicked(self):

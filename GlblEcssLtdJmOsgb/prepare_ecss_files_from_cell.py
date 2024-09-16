@@ -15,7 +15,7 @@ __prog__ = 'prepare_ecosse_files.py'
 # Version history
 # ---------------
 #
-from os.path import join, lexists, basename, isdir
+from os.path import join, lexists, basename, isdir, isfile
 from os import makedirs
 from shutil import copyfile, copytree
 from time import time
@@ -70,6 +70,19 @@ def make_ecss_files_from_cell(form, climgen, coord, lta_csv,  wthr_dir, ltd_data
     sims_wthr_dir = join(sims_dir, wthr_node_path)
     if not isdir(sims_wthr_dir):
         copytree(wthr_dir, sims_wthr_dir)
+
+    # copy spinup
+    # ===========
+    from shutil import copy as copy_file
+    if form.w_spin_read.isChecked():
+        spin_dir = form.w_spin_dir.text()
+        spin_ref_fn = join(spin_dir, 'spinup_' + coord + '.dat')
+        if isfile(spin_ref_fn):
+            spin_fn = join(sim_dir, 'spinup.dat')
+            copy_file(spin_ref_fn, spin_fn)
+        else:
+            print(spin_ref_fn  + ' does not exist')
+            QApplication.processEvents()
 
     # write kml and signature files
     # =============================

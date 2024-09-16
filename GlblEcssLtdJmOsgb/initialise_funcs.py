@@ -43,7 +43,7 @@ OSGB_SETUP = ['uk_hwsd_driver_data', 'lta_dir', 'rcp_dir', 'root_dir']
 
 MNDTRY_GRPS_CONFIG = ['cmnGUI', 'minGUI']
 MIN_GUI_LIST = ['wthrRsrce', 'bbox', 'use_drvr_flag']
-CMN_GUI_LIST = ['study', 'climScnr', 'realis', 'eqilMode', 'hwsd_drvr_fn', 'n_coords', 'pi_data_dir', 'spinup_dir']
+CMN_GUI_LIST = ['study', 'climScnr', 'realis', 'eqilMode', 'n_coords', 'pi_data_dir', 'spinup_dir']
 
 # ==============================================================
 
@@ -195,16 +195,10 @@ def _read_setup_file(form, fname_setup):
     root_dir = settings[grp]['root_dir']
     lta_dir = join(root_dir, settings[grp]['lta_dir'])
     rcp_dir = join(root_dir, settings[grp]['rcp_dir'])
-    uk_hwsd_drvr_fn = join(root_dir, settings[grp]['uk_hwsd_driver_data'])
 
     # ==============
     run_sims_flag = True
     mess = ' does not exist - cannot run simulations'
-    if isfile(uk_hwsd_drvr_fn):
-        print('CSV HWSD driver file ' + uk_hwsd_drvr_fn + ' exists\n')
-    else:
-        print('\n' + WARN_STR + 'CSV HWSD driver file ' + uk_hwsd_drvr_fn + mess)
-        run_sims_flag = False
 
     # ======= LTA ========
     if not isdir(lta_dir):
@@ -217,14 +211,29 @@ def _read_setup_file(form, fname_setup):
         print(WARN_STR + 'Climate directory {}'.format(rcp_dir) + mess)
         run_sims_flag = False
 
-    print_resource_locations(setup_file, config_dir, uk_hwsd_drvr_fn, rcp_dir, lta_dir,
-                                                                                sims_dir, log_dir, ecss_fns_dir)
+    _print_resource_locations(setup_file, config_dir, rcp_dir, lta_dir, sims_dir, log_dir, ecss_fns_dir)
     settings[grp]['run_sims_flag'] = run_sims_flag
 
     # return a single list
     # ====================
     settings['glbl_ecss_sttngs'].update(settings['osgb_setup'])
     return settings['glbl_ecss_sttngs']
+
+def _print_resource_locations(setup_file, config_dir, wthr_dir, lta_dir, sims_dir, log_dir, ecss_fns_dir):
+    """
+    report settings
+    """
+    print('\nResource locations:')
+    print('\tsetup file:          ' + setup_file)
+    print('\tconfiguration files: ' + config_dir)
+    print('\tFuture weather data: ' + wthr_dir)
+    print('\tLTA weather files:   ' + lta_dir)
+    print('\tsimulations:         ' + sims_dir)
+    print('\tlog_dir:             ' + log_dir)
+    print('\tEcosse files:        ' + ecss_fns_dir)
+    print('')
+
+    return
 
 def read_config_file(form):
     """
