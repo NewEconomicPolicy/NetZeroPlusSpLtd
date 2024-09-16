@@ -17,7 +17,7 @@ __prog__ = 'prepare_ecosse_files.py'
 #
 from os.path import join, lexists, basename, isdir, isfile
 from os import makedirs
-from shutil import copyfile, copytree
+from shutil import copyfile, copytree, copy as copy_file
 from time import time
 
 from PyQt5.QtWidgets import QApplication
@@ -73,7 +73,6 @@ def make_ecss_files_from_cell(form, climgen, coord, lta_csv,  wthr_dir, ltd_data
 
     # copy spinup
     # ===========
-    from shutil import copy as copy_file
     if form.w_spin_read.isChecked():
         spin_dir = form.w_spin_dir.text()
         spin_ref_fn = join(spin_dir, 'spinup_' + coord + '.dat')

@@ -11,10 +11,12 @@ __prog__ = 'grid_osgb_high_level_fns.py'
 __version__ = '0.0.1'
 __author__ = 's03mm5'
 
-from os.path import isdir, join
+from os.path import isdir, join, isfile
+from os import listdir
 from PyQt5.QtWidgets import QApplication
 from time import time
 from glob import glob
+from shutil import move as move_file
 
 from cvrtcoord import OSGB36toWGS84
 from grid_osgb_classes_and_fns import ClimGenNC, fetch_cell_ecss_data, fetch_ncells_aoi, fetch_dir_locations
@@ -148,3 +150,27 @@ def make_bbox_sims(form):
     QApplication.processEvents()
 
     return True
+
+def move_spinup_files(self):
+    """
+    move spinup files from grid cells to the spinup path
+    """
+    study = self.w_study.text()
+    study_dir = join(self.sttngs['sims_dir'], study)
+    dir_list = listdir(study_dir)
+    spin_dir = self.w_spin_dir.text()
+
+    imove = 0
+    for dirn in dir_list:
+        dirn_full = join(study_dir, dirn)
+        if isdir(dirn_full):
+            spinup_fn = join(dirn_full, 'spinup.dat')
+            if isfile(spinup_fn):
+                spin_ref_fn = join(spin_dir, 'spinup_' + dirn + '.dat')
+                move_file(spinup_fn, spin_ref_fn)
+                imove += 1
+
+    print('Moved {} spinup files to {}'.format(imove, spin_dir))
+    QApplication.processEvents()
+
+    return

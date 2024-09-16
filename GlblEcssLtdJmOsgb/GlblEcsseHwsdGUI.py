@@ -29,7 +29,7 @@ from common_cmpnntsGUI import (commonSection, change_config_file, study_text_cha
 from glbl_ecss_cmmn_cmpntsGUI import calculate_grid_cell
 from glbl_ecss_cmmn_funcs import write_study_definition_file
 
-from grid_osgb_high_level_fns import make_grid_cell_sims
+from grid_osgb_high_level_fns import make_grid_cell_sims, move_spinup_files
 from grid_osgb_classes_and_fns import make_hwsd_drvr_df, report_pi_csvs, report_spin_dir
 
 from initialise_funcs import (initiation, read_config_file, build_and_display_studies, write_runsites_cnfg_fn)
@@ -241,7 +241,7 @@ class Form(QWidget):
 
         icol = 0
         w_mve_spin = QPushButton('Move spinup files', self)
-        helpText = 'Move spinup files'
+        helpText = 'Move spinup files from each gridcell to the spinup path as spinup_easting_northing.dat files'
         w_mve_spin.setToolTip(helpText)
         w_mve_spin.setFixedWidth(WDGT_SIZE_110)
         # w_mve_spin.setEnabled(False)
@@ -343,21 +343,7 @@ class Form(QWidget):
         """
 
         """
-        from os.path import isdir
-        from shutil import move as move_file
-
-        study = self.w_study.text()
-        study_dir = join(self.sttngs['sims_dir'], study)
-        dir_list = listdir(study_dir)
-        spin_dir = self.w_spin_dir.text()
-
-        for dirn in dir_list:
-            dirn_full = join(study_dir, dirn)
-            if isdir(dirn_full):
-                spinup_fn = join(dirn_full, 'spinup.dat')
-                if isfile(spinup_fn):
-                    spin_ref_fn = join(spin_dir, 'spinup_' + dirn + '.dat')
-                    move_file(spinup_fn, spin_ref_fn)
+        move_spinup_files(self)
 
         return
 
@@ -647,7 +633,6 @@ class Form(QWidget):
         # stanza to move spinup files
         # ===========================
         if success_flag:
-            from misc_lta_fns import move_spinup_files
             move_spinup_files(self)
 
         return

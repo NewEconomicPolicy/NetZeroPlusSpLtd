@@ -214,13 +214,13 @@ def spinup_inp_out_mode(form, grid, irow):
 
     icol += 1
     w_spin_read = QRadioButton('read spinup data')
-    w_spin_read.setToolTip('set mode to 1 = read spinup data from spinup.dat')
+    w_spin_read.setToolTip('set mode to 1 = read previously generated spinup data stored under the spinup path')
     grid.addWidget(w_spin_read, irow, icol)
     form.w_spin_read = w_spin_read
 
     icol += 1
     w_spin_save = QRadioButton('save spinup data')
-    w_spin_save.setToolTip('set mode to 2 = save spinup data to spinup.dat')
+    w_spin_save.setToolTip('set mode to 2 = save spinup data to the spinup path as spinup_easting_northing.dat files')
     grid.addWidget(w_spin_save, irow, icol)
     form.w_spin_save = w_spin_save
 
