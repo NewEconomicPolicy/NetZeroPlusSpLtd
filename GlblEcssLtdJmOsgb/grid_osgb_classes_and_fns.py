@@ -107,6 +107,12 @@ def make_hwsd_drvr_df(form, hwsd_drvr_data_fn):
     form.w_drvr_dtls.setText('Records: ' + f'{nrecs:,d}' + '\t\t')
 
     if 'BNG_X' and 'BNG_Y' in hwsd_drvr_data:
+        bng_x = hwsd_drvr_data['BNG_X']
+        bbox = 'easting extent: {} {}\t'.format(bng_x.min(), bng_x.max())
+        bng_y = hwsd_drvr_data['BNG_Y']
+        bbox += 'northing extent {} {}: '.format(bng_y.min(), bng_y.max())
+        form.w_bbox.setText(bbox)
+
         form.hwsd_drvr_data = hwsd_drvr_data
         print('Created dataframe with ' + f'{nrecs:,d}' + ' records and ' + f'{nmetrics:,d}' + ' metrics ')
     else:

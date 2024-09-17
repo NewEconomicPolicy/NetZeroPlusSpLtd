@@ -83,65 +83,61 @@ def commonSection(form, grid, irow):
     irow += 1
     grid.addWidget(QLabel(''), irow, 2)  # spacer
 
-    # resources
-    # =========
-    irow += 1
-    lbl10w = QLabel('Weather resource:')
-    lbl10w.setAlignment(Qt.AlignRight)
-    helpText = 'CHESS weather datasets only'
-    lbl10w.setToolTip(helpText)
-    grid.addWidget(lbl10w, irow, 0)
-
-    grid.addWidget(QLabel(form.sttngs['wthr_rsrc']), irow, 1)
-
     # scenarios
     # =========
+    icol = 0
     lbl10 = QLabel('Scenario:')
     lbl10.setAlignment(Qt.AlignRight)
     helpText = 'Ecosse requires future average monthly precipitation and temperature derived from climate models.\n' \
         + 'The data used here is ClimGen v1.02 created on 16.10.08 developed by the Climatic Research Unit\n' \
         + ' and the Tyndall Centre. See: http://www.cru.uea.ac.uk/~timo/climgen/'
     lbl10.setToolTip(helpText)
-    grid.addWidget(lbl10, irow, 2)
+    grid.addWidget(lbl10, irow, icol)
 
+    icol += 1
     w_combo10s = QComboBox()
     w_combo10s.setFixedWidth(WDGT_SIZE_100)
-    grid.addWidget(w_combo10s, irow, 3)
+    grid.addWidget(w_combo10s, irow, icol)
     form.w_combo10s = w_combo10s
 
     for scenario in RCPS:
         form.w_combo10s.addItem(str(scenario))
 
+    # =====================
+    icol += 1
+    w_all_scens = QCheckBox('Use all scenarios')
+    helpText = 'Use all scenarios'
+    w_all_scens.setToolTip(helpText)
+    grid.addWidget(w_all_scens, irow, icol, 1, 2)
+    form.w_all_scens = w_all_scens
+
     # realisations
     # =============
+    icol += 1
     lbl10r = QLabel('Realisation:')
     lbl10r.setAlignment(Qt.AlignRight)
     helpText = ''
     lbl10r.setToolTip(helpText)
-    grid.addWidget(lbl10r, irow, 4)
+    grid.addWidget(lbl10r, irow, icol)
 
+    icol += 1
     w_combo10r = QComboBox()
     w_combo10r.setFixedWidth(WDGT_SIZE_40)
-    grid.addWidget(w_combo10r, irow, 5)
+    grid.addWidget(w_combo10r, irow, icol)
     form.w_combo10r = w_combo10r
 
     for realis in REALISATIONS:
         form.w_combo10r.addItem(str(realis))
 
-    # additional selections
-    # =====================
-    irow += 1
-    w_all_scens = QCheckBox('Use all scenarios')
-    helpText = 'Use all scenarios'
-    w_all_scens.setToolTip(helpText)
-    grid.addWidget(w_all_scens, irow, 2, 1, 2)
-    form.w_all_scens = w_all_scens
-
+    icol += 1
     w_all_realis = QCheckBox('Use all realisations')
     helpText = 'Use all realisations'
     w_all_realis.setToolTip(helpText)
-    grid.addWidget(w_all_realis, irow, 4, 1, 2)
+    grid.addWidget(w_all_realis, irow, icol, 1, 2)
     form.w_all_realis = w_all_realis
+
+    irow += 1
+    grid.addWidget(QLabel(''), irow, 2)  # spacer
 
     # Simulation years
     # ================
@@ -250,7 +246,7 @@ def spinup_inp_out_mode(form, grid, irow):
     grid.addWidget(w_spin_dir, irow, 1, 1, 5)
     form.w_spin_dir = w_spin_dir
 
-    w_spin_dtls = QLabel('Records:' + PDDNG_10)
+    w_spin_dtls = QLabel()
     grid.addWidget(w_spin_dtls, irow, 7)
     form.w_spin_dtls = w_spin_dtls
 

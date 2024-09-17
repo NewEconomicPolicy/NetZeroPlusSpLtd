@@ -155,6 +155,12 @@ def _read_setup_file(form, fname_setup):
     runsites_py = settings[grp]['runsites_py']
     python_exe = settings[grp]['python_exe']
 
+    # banner
+    # ======
+    mess = '\nYou are running the NetZeroPlus variation of Global Ecosse\n'
+    mess += 'This variation uses the CHESS high-resolution gridded weather and future climate datasets'
+    print(mess)
+
     # additional settings to enable ECOSSE to be run
     # ==============================================
     runsites_cnfg_fn = join(config_dir,'global_ecosse_ltd_data_runsites_config.json')

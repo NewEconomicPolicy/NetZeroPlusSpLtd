@@ -12,7 +12,7 @@ __author__ = 's03mm5'
 
 import sys
 from os.path import join, isfile, normpath
-from os import walk, getcwd, remove, chdir, listdir
+from os import walk, getcwd, remove, chdir
 from time import time
 from datetime import timedelta
 from shutil import rmtree
@@ -20,7 +20,7 @@ from subprocess import Popen, PIPE, STDOUT, DEVNULL
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QFont
-from PyQt5.QtWidgets import (QLabel, QWidget, QHBoxLayout, QVBoxLayout, QGridLayout, QLineEdit, QRadioButton,
+from PyQt5.QtWidgets import (QLabel, QWidget, QHBoxLayout, QVBoxLayout, QGridLayout, QLineEdit,
                 QButtonGroup, QComboBox, QPushButton, QCheckBox, QFileDialog, QTextEdit, QMessageBox, QApplication)
 
 from shape_funcs import format_bbox, calculate_area
@@ -95,6 +95,9 @@ class Form(QWidget):
         
         # ===========================
         irow += 1
+        grid.addWidget(QLabel(''), irow, 2)  # spacer
+
+        irow += 1
         irow = spinup_inp_out_mode(self, grid, irow)  # extra line for spinup mode
 
         irow += 1
@@ -111,7 +114,6 @@ class Form(QWidget):
 
         # report on driver file
         # =====================
-
         w_hwsd_drvr_fn = QLabel('')
         grid.addWidget(w_hwsd_drvr_fn, irow, 1, 1, 6)
         self.w_hwsd_drvr_fn = w_hwsd_drvr_fn
@@ -240,11 +242,10 @@ class Form(QWidget):
         irow += 1
 
         icol = 0
-        w_mve_spin = QPushButton('Move spinup files', self)
+        w_mve_spin = QPushButton('Move spin to path', self)
         helpText = 'Move spinup files from each gridcell to the spinup path as spinup_easting_northing.dat files'
         w_mve_spin.setToolTip(helpText)
         w_mve_spin.setFixedWidth(WDGT_SIZE_110)
-        # w_mve_spin.setEnabled(False)
         grid.addWidget(w_mve_spin, irow, icol, alignment=Qt.AlignLeft)
         w_mve_spin.clicked.connect(self.moveSpinupFiles)
 
@@ -344,6 +345,8 @@ class Form(QWidget):
 
         """
         move_spinup_files(self)
+        spin_dir = self.w_spin_dir.text()
+        report_spin_dir(self, spin_dir)
 
         return
 
