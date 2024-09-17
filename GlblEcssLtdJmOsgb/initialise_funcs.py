@@ -38,12 +38,13 @@ MODEL_SWITCHES_FN = 'Model_Switches.dat'
 sleepTime = 5
 
 MNDTRY_GRPS_SETUP = ['glbl_ecss_sttngs', 'osgb_setup']
-GLBL_ECSS_STTNGS = ['ecss_fns_dir', 'config_dir', 'fname_png', 'log_dir', 'python_exe', 'runsites_py', 'sims_dir']
+GLBL_ECSS_STTNGS = ['config_dir', 'ecss_fns_dir', 'fname_png', 'log_dir', 'python_exe', 'runsites_py', 'sims_dir',
+                                                                                                        'spinup_dir']
 OSGB_SETUP = ['uk_hwsd_driver_data', 'lta_dir', 'rcp_dir', 'root_dir']
 
 MNDTRY_GRPS_CONFIG = ['cmnGUI', 'minGUI']
 MIN_GUI_LIST = ['wthrRsrce', 'bbox', 'use_drvr_flag']
-CMN_GUI_LIST = ['study', 'climScnr', 'realis', 'eqilMode', 'n_coords', 'pi_data_dir', 'spinup_dir']
+CMN_GUI_LIST = ['study', 'climScnr', 'realis', 'eqilMode', 'n_coords', 'pi_data_dir']
 
 # ==============================================================
 
@@ -287,12 +288,15 @@ def read_config_file(form):
                 print(ERROR_STR + 'in group: {} - setting {} is required in config file {}'.format(grp, key, config_file))
                 return False
 
-    form.w_study.setText(str(config[grp]['study']))
+    study = str(config[grp]['study'])
+    form.w_study.setText(study)
 
     # post weather settings
     # =====================
-    form.w_combo10s.setCurrentText(config[grp]['climScnr'])
-    form.w_combo10r.setCurrentText(config[grp]['realis'])
+    clim_scnr = config[grp]['climScnr']
+    form.w_combo10s.setCurrentText(clim_scnr)
+    realis = config[grp]['realis']
+    form.w_combo10r.setCurrentText(realis)
 
     hwsd_drvr_fn = config[grp]['hwsd_drvr_fn']
     make_hwsd_drvr_df(form, hwsd_drvr_fn)
@@ -301,7 +305,9 @@ def read_config_file(form):
     form.w_pi_dir.setText(pi_data_dir)
     report_pi_csvs(form, pi_data_dir)
 
-    spin_dir = config[grp]['spinup_dir']
+    spin_dir = join(form.sttngs['spinup_dir'], study, clim_scnr + '_' + realis)
+    if not isdir(spin_dir):
+        makedirs(spin_dir)
     form.w_spin_dir.setText(spin_dir)
     report_spin_dir(form, spin_dir)
 
@@ -337,7 +343,6 @@ def write_config_file(form, message_flag = True):
             'climScnr'  : form.w_combo10s.currentText(),
             'hwsd_drvr_fn': form.w_hwsd_drvr_fn.text(),
             'pi_data_dir': form.w_pi_dir.text(),
-            'spinup_dir' : form.w_spin_dir.text(),
             'eqilMode'  : form.w_equimode.text(),
             'realis': form.w_combo10r.currentText(),
             'n_coords'  : form.w_ncoords.text()

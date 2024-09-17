@@ -86,7 +86,6 @@ def make_ecss_files_from_cell(form, climgen, coord, lta_csv,  wthr_dir, ltd_data
     # write kml and signature files
     # =============================
     write_kml_file(sim_dir, coord, coord, lat, lon)
-
     write_signature_file(sim_dir, coord, soil_rec, lat, lon, province)
 
     # copy across Model_Switches.dat file
