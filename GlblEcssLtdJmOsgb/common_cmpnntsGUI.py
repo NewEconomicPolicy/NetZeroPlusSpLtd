@@ -239,7 +239,7 @@ def spinup_inp_out_mode(form, grid, irow):
     helpText = 'Path for spinup files'
     w_spin_pb.setToolTip(helpText)
     w_spin_pb.setFixedWidth(WDGT_SIZE_110)
-    w_spin_pb.setEnabled(False)
+    w_spin_pb.setEnabled(True)
     grid.addWidget(w_spin_pb, irow, 0)
     w_spin_pb.clicked.connect(form.fetchSpinupDir)
 

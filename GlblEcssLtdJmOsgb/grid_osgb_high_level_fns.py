@@ -167,8 +167,12 @@ def move_spinup_files(self):
             spinup_fn = join(dirn_full, 'spinup.dat')
             if isfile(spinup_fn):
                 spin_ref_fn = join(spin_dir, 'spinup_' + dirn + '.dat')
-                move_file(spinup_fn, spin_ref_fn)
-                imove += 1
+                try:
+                    move_file(spinup_fn, spin_ref_fn)
+                except PermissionError as err:
+                    self.lgr.info(str(err))
+                else:
+                    imove += 1
 
     print('Moved {} spinup files to {}'.format(imove, spin_dir))
     QApplication.processEvents()
