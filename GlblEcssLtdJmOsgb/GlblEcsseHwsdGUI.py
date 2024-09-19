@@ -246,7 +246,6 @@ class Form(QWidget):
         helpText = 'Move spinup files from each gridcell to the spinup path as spinup_easting_northing.dat files'
         w_mve_spin.setToolTip(helpText)
         w_mve_spin.setFixedWidth(WDGT_SIZE_110)
-        w_mve_spin.setEnabled(False)
         grid.addWidget(w_mve_spin, irow, icol, alignment=Qt.AlignLeft)
         w_mve_spin.clicked.connect(self.moveSpinupFiles)
 
@@ -632,12 +631,6 @@ class Form(QWidget):
         scnds_elapsed = round(time() - start_time)
         print('Time taken: ' + str(timedelta(seconds=scnds_elapsed)))
         QApplication.processEvents()
-
-
-        # stanza to move spinup files
-        # ===========================
-        if success_flag:
-            move_spinup_files(self)
 
         return
 

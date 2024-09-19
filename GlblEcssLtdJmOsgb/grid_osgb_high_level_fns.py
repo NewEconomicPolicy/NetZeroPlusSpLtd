@@ -12,7 +12,7 @@ __version__ = '0.0.1'
 __author__ = 's03mm5'
 
 from os.path import isdir, join, isfile
-from os import listdir
+from os import listdir, makedirs
 from PyQt5.QtWidgets import QApplication
 from time import time
 from glob import glob
@@ -48,6 +48,9 @@ def make_grid_cell_sims(form):
         return False
 
     # ==================================
+    print(' ')
+    QApplication.processEvents()
+
     climgen = ClimGenNC(form, rcp_realis)   # Initialise the climate data object
     if not climgen.ret_code:
         return False
@@ -83,7 +86,7 @@ def make_grid_cell_sims(form):
         if ncells_vld >= n_cells_max:
             break
 
-    print('Found: {} valid coords\tNot in HWSD file: {}\tBuilt up: {}\tEmpty lta files: {}'
+    print('Generated: {} grid cells\tRecords in driver file but not in HWSD file: {}\tBuilt up: {}\tEmpty lta files: {}'
                                                 .format(ncells_vld, not_in_hwsd, built_up, empty_lta))
     QApplication.processEvents()
 
@@ -159,6 +162,9 @@ def move_spinup_files(self):
     study_dir = join(self.sttngs['sims_dir'], study)
     dir_list = listdir(study_dir)
     spin_dir = self.w_spin_dir.text()
+    if not isdir(spin_dir):
+        makedirs(spin_dir)
+        print('Created ' + spin_dir)
 
     imove = 0
     for dirn in dir_list:

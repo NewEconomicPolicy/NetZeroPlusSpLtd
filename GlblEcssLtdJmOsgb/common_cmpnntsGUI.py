@@ -200,23 +200,26 @@ def spinup_inp_out_mode(form, grid, irow):
     icol = 0
     w_lbl07 = QLabel('Spinup input/output mode:')
     w_lbl07.setAlignment(Qt.AlignRight)
+    w_lbl07.setToolTip('These settings control the spinup input/output mode setting in the Model_Switches.dat file')
     grid.addWidget(w_lbl07, irow, icol)
+
+    help_mess = 'Set spinup input/output mode setting in Model_Switches.dat file to '
 
     icol += 1
     w_spin_off = QRadioButton('off')
-    w_spin_off.setToolTip('Set spinup input/output mode to 0 = off in Model_Switches.dat file')
+    w_spin_off.setToolTip(help_mess + ' 0 = off')
     grid.addWidget(w_spin_off, irow, icol)
     form.w_spin_off = w_spin_off
 
     icol += 1
     w_spin_read = QRadioButton('read spinup data')
-    w_spin_read.setToolTip('set mode to 1 = read previously generated spinup data stored under the spinup path')
+    w_spin_read.setToolTip(help_mess + ' 1 = read previously generated spinup data stored under the spinup path')
     grid.addWidget(w_spin_read, irow, icol)
     form.w_spin_read = w_spin_read
 
     icol += 1
     w_spin_save = QRadioButton('save spinup data')
-    w_spin_save.setToolTip('set mode to 2 = save spinup data to the spinup path as spinup_easting_northing.dat files')
+    w_spin_save.setToolTip(help_mess + '2 = save spinup data')
     grid.addWidget(w_spin_save, irow, icol)
     form.w_spin_save = w_spin_save
 
@@ -236,7 +239,8 @@ def spinup_inp_out_mode(form, grid, irow):
     # ================================
     irow += 1
     w_spin_pb = QPushButton('Spinup path')
-    helpText = 'Path for spinup files'
+    helpText = 'Path for storing spinup files from the grid cells, '
+    helpText += 'each spinup.dat file is recorded as spinup_easting_northing.dat'
     w_spin_pb.setToolTip(helpText)
     w_spin_pb.setFixedWidth(WDGT_SIZE_110)
     w_spin_pb.setEnabled(True)
