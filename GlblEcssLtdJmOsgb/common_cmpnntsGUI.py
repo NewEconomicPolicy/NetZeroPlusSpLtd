@@ -261,7 +261,6 @@ def adjust_model_switches(form):
     """
     write last GUI selections Model_Switches.dat file
     """
-
     if form.w_spin_save.isChecked():
         spin_mode = '2'
     elif form.w_spin_read.isChecked():
@@ -278,7 +277,6 @@ def adjust_model_switches(form):
         rc = finp.writelines(lines)
 
     return
-
 
 def save_clicked(form):
     """

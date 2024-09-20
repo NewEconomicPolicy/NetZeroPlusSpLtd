@@ -71,18 +71,6 @@ def make_ecss_files_from_cell(form, climgen, coord, lta_csv,  wthr_dir, ltd_data
     if not isdir(sims_wthr_dir):
         copytree(wthr_dir, sims_wthr_dir)
 
-    # copy spinup
-    # ===========
-    if form.w_spin_read.isChecked():
-        spin_dir = form.w_spin_dir.text()
-        spin_ref_fn = join(spin_dir, 'spinup_' + coord + '.dat')
-        if isfile(spin_ref_fn):
-            spin_fn = join(sim_dir, 'spinup.dat')
-            copy_file(spin_ref_fn, spin_fn)
-        else:
-            print(spin_ref_fn  + ' does not exist')
-            QApplication.processEvents()
-
     # write kml and signature files
     # =============================
     write_kml_file(sim_dir, coord, coord, lat, lon)

@@ -29,7 +29,7 @@ from common_cmpnntsGUI import (commonSection, change_config_file, study_text_cha
 from glbl_ecss_cmmn_cmpntsGUI import calculate_grid_cell
 from glbl_ecss_cmmn_funcs import write_study_definition_file
 
-from grid_osgb_high_level_fns import make_grid_cell_sims, move_spinup_files
+from grid_osgb_high_level_fns import make_grid_cell_sims, move_spinup_files, adjust_model_switches_files
 from grid_osgb_classes_and_fns import make_hwsd_drvr_df, report_pi_csvs, report_spin_dir
 
 from initialise_funcs import (initiation, read_config_file, build_and_display_studies, write_runsites_cnfg_fn)
@@ -600,6 +600,10 @@ class Form(QWidget):
 
         curr_dir = getcwd()
         chdir(self.settings['log_dir'])
+
+        # make sure model switches files reflect user choice
+        # ==================================================
+        adjust_model_switches_files(self)
 
         stdout_path = join(self.sttngs['sims_dir'], 'stdout.txt')
         runsites_py = self.sttngs['runsites_py']

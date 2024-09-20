@@ -17,6 +17,7 @@ from PyQt5.QtWidgets import QApplication
 from time import time
 from glob import glob
 from shutil import move as move_file
+from shutil import copyfile, copytree, copy as copy_file
 
 from cvrtcoord import OSGB36toWGS84
 from grid_osgb_classes_and_fns import ClimGenNC, fetch_cell_ecss_data, fetch_ncells_aoi, fetch_dir_locations
@@ -92,6 +93,87 @@ def make_grid_cell_sims(form):
 
     return True
 
+def adjust_model_switches_files(form):
+    """
+    move spinup files from grid cells to the spinup path
+    """
+    study = form.w_study.text()
+    study_dir = join(form.sttngs['sims_dir'], study)
+    dir_list = listdir(study_dir)
+
+    if form.w_spin_save.isChecked():
+        spin_mode = '2'
+    elif form.w_spin_read.isChecked():
+        spin_mode = '1'
+    else:
+        spin_mode = '0'
+
+    nadjust = 0
+    nspin = 0
+    for coord in dir_list:
+        sim_dir = join(study_dir, coord)
+        if isdir(sim_dir):
+
+            mdl_swtchs_fn = join(sim_dir,'Model_Switches.dat')
+            if isfile(mdl_swtchs_fn):
+
+                with open(mdl_swtchs_fn, 'r') as finp:
+                    lines = finp.readlines()
+
+                lines[15] = spin_mode + lines[15][1:]
+                with open(mdl_swtchs_fn, 'w') as finp:
+                    rc = finp.writelines(lines)
+
+                nadjust += 1
+
+                # copy spinup
+                # ===========
+                if spin_mode == '1':
+                    spin_dir = form.w_spin_dir.text()
+                    spin_ref_fn = join(spin_dir, 'spinup_' + coord + '.dat')
+                    if isfile(spin_ref_fn):
+                        spin_fn = join(sim_dir, 'spinup.dat')
+                        copy_file(spin_ref_fn, spin_fn)
+                        nspin += 1
+                    else:
+                        print(spin_ref_fn + ' does not exist')
+                        QApplication.processEvents()
+
+    print('Adjusted {} Model Switches and copied {} spinup files'.format(nadjust, nspin))
+    QApplication.processEvents()
+
+    return
+
+def move_spinup_files(form):
+    """
+    move spinup files from grid cells to the spinup path
+    """
+    study = form.w_study.text()
+    study_dir = join(form.sttngs['sims_dir'], study)
+    dir_list = listdir(study_dir)
+    spin_dir = form.w_spin_dir.text()
+    if not isdir(spin_dir):
+        makedirs(spin_dir)
+        print('Created ' + spin_dir)
+
+    imove = 0
+    for dirn in dir_list:
+        dirn_full = join(study_dir, dirn)
+        if isdir(dirn_full):
+            spinup_fn = join(dirn_full, 'spinup.dat')
+            if isfile(spinup_fn):
+                spin_ref_fn = join(spin_dir, 'spinup_' + dirn + '.dat')
+                try:
+                    move_file(spinup_fn, spin_ref_fn)
+                except PermissionError as err:
+                    form.lgr.info(str(err))
+                else:
+                    imove += 1
+
+    print('Moved {} spinup files to {}'.format(imove, spin_dir))
+    QApplication.processEvents()
+
+    return
 def make_bbox_sims(form):
     """
     called from GUI
@@ -153,34 +235,3 @@ def make_bbox_sims(form):
     QApplication.processEvents()
 
     return True
-
-def move_spinup_files(self):
-    """
-    move spinup files from grid cells to the spinup path
-    """
-    study = self.w_study.text()
-    study_dir = join(self.sttngs['sims_dir'], study)
-    dir_list = listdir(study_dir)
-    spin_dir = self.w_spin_dir.text()
-    if not isdir(spin_dir):
-        makedirs(spin_dir)
-        print('Created ' + spin_dir)
-
-    imove = 0
-    for dirn in dir_list:
-        dirn_full = join(study_dir, dirn)
-        if isdir(dirn_full):
-            spinup_fn = join(dirn_full, 'spinup.dat')
-            if isfile(spinup_fn):
-                spin_ref_fn = join(spin_dir, 'spinup_' + dirn + '.dat')
-                try:
-                    move_file(spinup_fn, spin_ref_fn)
-                except PermissionError as err:
-                    self.lgr.info(str(err))
-                else:
-                    imove += 1
-
-    print('Moved {} spinup files to {}'.format(imove, spin_dir))
-    QApplication.processEvents()
-
-    return
