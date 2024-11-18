@@ -335,10 +335,6 @@ class Form(QWidget):
         # reads and set values from last run
         # ==================================
         read_config_file(self)
-        if self.sttngs['run_sims_flag']:
-            w_create_files.setEnabled(True)
-        else:
-            w_create_files.setEnabled(False)
 
     def moveSpinupFiles(self):
         """

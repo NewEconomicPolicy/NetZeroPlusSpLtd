@@ -60,15 +60,17 @@ def report_spin_dir(form, spin_dir):
     """
     report spinup files
     """
-    nspins = len(glob(join(spin_dir, 'spinup_*.dat')))
+    form.w_create_files.setEnabled(False)
+    if isdir(spin_dir):
+        nspins = len(glob(join(spin_dir, 'spinup_*.dat')))
+        if form.sttngs['run_sims_flag']:
+            form.w_create_files.setEnabled(True)
+    else:
+        nspins = 0
+        print(WARN_STR + 'spinup directory ' + spin_dir + ' does not exist')
+
     form.w_spin_dtls.setText('Spinup files: ' + f'{nspins:,d}' + '\t\t')
 
-    '''
-    if nspins == 0:
-        form.w_create_files.setEnabled(False)
-    else:
-        form.w_create_files.setEnabled(True)
-    '''
     QApplication.processEvents()
 
     return
