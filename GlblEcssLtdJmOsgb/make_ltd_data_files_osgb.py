@@ -54,7 +54,7 @@ class MakeLtdDataFiles(object):
         self.latitude = no_data
         self.wt_at_strt = no_data
         ecosse_exe = form.sttngs['ecosse_exe']
-        if ecosse_exe is None or ecosse_exe == 'ecossev6_2c' or ecosse_exe == 'ecossev6_2b':
+        if ecosse_exe is None or ecosse_exe == 'elum_ecosse':
             self.wt_max_stand = no_data
         else:
             self.wt_max_stand = 0
