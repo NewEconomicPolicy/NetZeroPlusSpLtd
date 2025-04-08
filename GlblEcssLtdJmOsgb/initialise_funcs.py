@@ -218,6 +218,7 @@ def _read_setup_file(form, fname_setup):
 
     _print_resource_locations(setup_file, config_dir, rcp_dir, lta_dir, sims_dir, log_dir, ecss_fns_dir)
     settings[grp]['run_sims_flag'] = run_sims_flag
+    settings[grp]['setup_file'] = setup_file
 
     # return a single list
     # ====================

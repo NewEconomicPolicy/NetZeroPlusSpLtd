@@ -1,14 +1,11 @@
-"""
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # Name:        common_componentsGUI.p
 # Purpose:     consist of high level functions invoked by main GUI
 # Author:      Mike Martin
 # Created:     11/12/2015
 # Licence:     <your licence>
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 #
-"""
-
 __prog__ = 'common_cmpnntsGUI.py'
 __version__ = '0.0.1'
 __author__ = 's03mm5'
@@ -16,11 +13,11 @@ __author__ = 's03mm5'
 # Version history
 # ---------------
 #
-from os.path import normpath, isfile
+from os.path import normpath, isfile, join
 from time import sleep
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QLabel, QLineEdit, QComboBox, QCheckBox, QApplication, QButtonGroup, QRadioButton,
+from PyQt5.QtWidgets import (QLabel, QLineEdit, QComboBox, QApplication, QButtonGroup, QRadioButton,
                                                                                             QCheckBox, QPushButton)
 
 from initialise_funcs import read_config_file, write_config_file
@@ -46,6 +43,7 @@ lta_strt_yr, lta_end_yr = (1988, 2018)
 SPATIAL = 1
 CSV_FILE = 2
 
+WARN_STR = '*** Warning *** '
 sleepTime = 3
 
 # ====================================
@@ -208,18 +206,21 @@ def spinup_inp_out_mode(form, grid, irow):
     icol += 1
     w_spin_off = QRadioButton('off')
     w_spin_off.setToolTip(help_mess + ' 0 = off')
+    w_spin_off.setEnabled(False)
     grid.addWidget(w_spin_off, irow, icol)
     form.w_spin_off = w_spin_off
 
     icol += 1
     w_spin_read = QRadioButton('read spinup data')
     w_spin_read.setToolTip(help_mess + ' 1 = read previously generated spinup data stored under the spinup path')
+    w_spin_read.setEnabled(False)
     grid.addWidget(w_spin_read, irow, icol)
     form.w_spin_read = w_spin_read
 
     icol += 1
     w_spin_save = QRadioButton('save spinup data')
     w_spin_save.setToolTip(help_mess + '2 = save spinup data')
+    w_spin_save.setEnabled(False)
     grid.addWidget(w_spin_save, irow, icol)
     form.w_spin_save = w_spin_save
 
@@ -227,7 +228,7 @@ def spinup_inp_out_mode(form, grid, irow):
     w_inpts_choice.addButton(w_spin_off)
     w_inpts_choice.addButton(w_spin_read)
     w_inpts_choice.addButton(w_spin_save)
-    w_spin_read.setChecked(True)
+    w_spin_off.setChecked(True)        # default setting
 
     # assign check values to radio buttons
     # ====================================
@@ -243,7 +244,7 @@ def spinup_inp_out_mode(form, grid, irow):
     helpText += 'each spinup.dat file is recorded as spinup_easting_northing.dat'
     w_spin_pb.setToolTip(helpText)
     w_spin_pb.setFixedWidth(WDGT_SIZE_110)
-    w_spin_pb.setEnabled(True)
+    w_spin_pb.setEnabled(False)
     grid.addWidget(w_spin_pb, irow, 0)
     w_spin_pb.clicked.connect(form.fetchSpinupDir)
 
@@ -256,6 +257,58 @@ def spinup_inp_out_mode(form, grid, irow):
     form.w_spin_dtls = w_spin_dtls
 
     return irow
+
+def check_runsites_adjust_pshbttns(form):
+    """
+    write last GUI selections Model_Switches.dat file
+    """
+    """
+
+    """
+    run_ecosse_flag = True
+    runsites_py = form.sttngs['runsites_py']
+    config_dir = form.sttngs['config_dir']
+    runsites_config_fn = form.sttngs['runsites_cnfg_fn']
+    python_exe = form.sttngs['python_exe']
+    setup_file = form.sttngs['setup_file']
+
+    # file to run Ecosse
+    # ==================
+    if not isfile(runsites_py):
+        print(WARN_STR + '\tECOSSE run script ' + runsites_py + ' does not exist')
+        run_ecosse_flag = False
+
+    # check that the runsites configuration file exists
+    # =================================================
+    runsites_cnfg_fn = join(config_dir, runsites_config_fn)
+
+    mess = 'Run sites configuration file ' + runsites_cnfg_fn
+    if isfile(runsites_cnfg_fn):
+        mess += ' exists'
+    else:
+        print(WARN_STR + '\tRun sites configuration file ' + runsites_cnfg_fn + ' does not exist')
+        run_ecosse_flag = False
+
+    print(mess)
+
+    # make sure all components of the command string exist
+    # ====================================================
+
+    if not isfile(python_exe):
+        print(WARN_STR + '\tPython programme ' + python_exe + ' does not exist')
+        run_ecosse_flag = False
+
+    if run_ecosse_flag:
+        form.w_run_ecosse.setEnabled(True)
+        # TODO: save setting in config file form.w_auto_spec.setChecked(True)
+        form.w_auto_spec.setEnabled(True)
+    else:
+        form.w_run_ecosse.setEnabled(False)
+        form.w_auto_spec.setChecked(False)
+        form.w_auto_spec.setEnabled(False)
+        print(WARN_STR + 'cannot run ECOSSE - check setup file: ' + setup_file)
+
+    return
 
 def adjust_model_switches(form):
     """

@@ -25,7 +25,7 @@ from PyQt5.QtWidgets import (QLabel, QWidget, QHBoxLayout, QVBoxLayout, QGridLay
 
 from shape_funcs import format_bbox, calculate_area
 from common_cmpnntsGUI import (commonSection, change_config_file, study_text_changed, exit_clicked, save_clicked,
-                                                                 spinup_inp_out_mode, adjust_model_switches)
+                                        spinup_inp_out_mode, adjust_model_switches, check_runsites_adjust_pshbttns)
 from glbl_ecss_cmmn_cmpntsGUI import calculate_grid_cell
 from glbl_ecss_cmmn_funcs import write_study_definition_file
 
@@ -246,6 +246,7 @@ class Form(QWidget):
         helpText = 'Move spinup files from each gridcell to the spinup path as spinup_easting_northing.dat files'
         w_mve_spin.setToolTip(helpText)
         w_mve_spin.setFixedWidth(WDGT_SIZE_110)
+        w_mve_spin.setEnabled(False)
         grid.addWidget(w_mve_spin, irow, icol, alignment=Qt.AlignLeft)
         w_mve_spin.clicked.connect(self.moveSpinupFiles)
 
@@ -335,6 +336,7 @@ class Form(QWidget):
         # reads and set values from last run
         # ==================================
         read_config_file(self)
+        check_runsites_adjust_pshbttns(self)
 
     def moveSpinupFiles(self):
         """
