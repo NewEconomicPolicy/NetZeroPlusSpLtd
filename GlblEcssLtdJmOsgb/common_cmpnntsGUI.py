@@ -336,7 +336,8 @@ def save_clicked(form):
     write last GUI selections
     """
     write_config_file(form)
-    write_study_definition_file(form, glbl_ecss_variation='jm')
+    # write_study_definition_file(form)
+    write_study_definition_file(form, form.version)
 
     return
 

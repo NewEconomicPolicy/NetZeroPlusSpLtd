@@ -57,7 +57,7 @@ class Form(QWidget):
 
         super(Form, self).__init__(parent)
 
-        self.version = 'HWSD_grid'
+        self.version = 'NetZeroPlus'
         initiation(self)
         font = QFont(self.font())
         font.setPointSize(font.pointSize() + 2)
@@ -549,7 +549,8 @@ class Form(QWidget):
         if not ret_code:
             return
 
-        write_study_definition_file(self, glbl_ecss_variation='jm')
+        # write_study_definition_file(self)
+        write_study_definition_file(self, self.version)
 
         # run further steps
         # =================
