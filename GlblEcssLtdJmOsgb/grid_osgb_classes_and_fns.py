@@ -58,9 +58,9 @@ def fetch_dir_locations(form):
 
 def report_spin_dir(form, spin_dir):
     """
-    report spinup files
+    report spinup files - no longer used
     """
-    form.w_create_files.setEnabled(False)
+    form.w_create_files.setEnabled(True)
     if isdir(spin_dir):
         nspins = len(glob(join(spin_dir, 'spinup_*.dat')))
         if form.sttngs['run_sims_flag']:
